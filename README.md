@@ -1,6 +1,6 @@
 # Phase Two Keycloak image
 
-Contains the base Phase Two Keycloak image that is used in the self-serve clusters (both for shared and dedicated). This is based on the Phase Two Keycloak image, which differs from the mainline only in that it supports CockroachDB for the legacy store type.
+Contains the base Phase Two Keycloak image that is used in the self-serve clusters (both for shared and dedicated). This is based on the a Keycloak image which differs from the mainline only in that it supports CockroachDB for the legacy store type.
 
 ## Extensions
 
@@ -25,6 +25,12 @@ Also, the distribution contains the `keycloak-admin-client` and the dependencies
 docker build -t quay.io/phasetwo/phasetwo-keycloak:latest -f Dockerfile .
 ```
 
+## Distribution
+
+```
+docker push quay.io/phasetwo/phasetwo-keycloak:VERSION
+```
+
 ## Testing
 
 There are examples for Postgres and Cockroach in the `examples/` directory. E.g.:
@@ -33,7 +39,8 @@ There are examples for Postgres and Cockroach in the `examples/` directory. E.g.
 cd examples/cockroach/
 docker rmi -f phasetwo/phasetwo-keycloak-crdb:latest
 docker build -t phasetwo/phasetwo-keycloak-crdb:latest -f Dockerfile .
-#If you need to inspect the image contents, use:
+# If you need to inspect the image contents, use:
 docker run -it --rm  --entrypoint /bin/bash phasetwo/phasetwo-keycloak-crdb:latest
+# Run it with a single-node crdb instance and caddy as a reverse proxy
 docker-compose -f crdb-keycloak.yml up
 ```
