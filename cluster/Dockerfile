@@ -9,9 +9,9 @@ ENV KC_CACHE_CONFIG_FILE=cache-ispn-jdbc-ping.xml
 ENV KC_TRANSACTION_XA_ENABLED=false
 ENV KC_TRANSACTION_JTA_ENABLED=false
 
-COPY ./../conf/cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
+COPY ./conf/cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
 
-COPY ./lib/*.jar /opt/keycloak/providers/
+COPY ./cluster/lib/*.jar /opt/keycloak/providers/
 
 RUN /opt/keycloak/bin/kc.sh build
 
