@@ -18,6 +18,10 @@ This distribution contains the following extensions:
 
 Also, the distribution contains the `keycloak-admin-client` and the dependencies required to run it in this version without Resteasy dependency hell.
 
+## Versioning
+
+Format for version is <keycloak-version>-<phasetwo-minor-version> e.g. 19.0.1-alpha, 19.0.1-0
+
 ## Building
 
 ```
