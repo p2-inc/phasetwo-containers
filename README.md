@@ -48,3 +48,9 @@ docker run -it --rm  --entrypoint /bin/bash phasetwo/phasetwo-keycloak-crdb:late
 # Run it with a single-node crdb instance and caddy as a reverse proxy
 docker-compose -f crdb-keycloak.yml up
 ```
+
+## Releases
+
+https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags
+
+- 19.0.1-alpha
