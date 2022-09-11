@@ -40,13 +40,12 @@ docker push quay.io/phasetwo/phasetwo-keycloak:VERSION
 There are examples for Postgres and Cockroach in the `examples/` directory. E.g.:
 
 ```
-cd examples/cockroach/
 docker rmi -f phasetwo/phasetwo-keycloak-crdb:latest
-docker build -t phasetwo/phasetwo-keycloak-crdb:latest -f Dockerfile .
+docker build -t phasetwo/phasetwo-keycloak-crdb:latest -f examples/cockroach/Dockerfile .
 # If you need to inspect the image contents, use:
 docker run -it --rm  --entrypoint /bin/bash phasetwo/phasetwo-keycloak-crdb:latest
 # Run it with a single-node crdb instance and caddy as a reverse proxy
-docker-compose -f crdb-keycloak.yml up
+docker-compose -f examples/cockroach/crdb-keycloak.yml up
 ```
 
 ## Releases
