@@ -1,3 +1,5 @@
+> :rocket: **Try it for free** in the new Phase Two [keycloak managed service](https://phasetwo.io/dashboard/?utm_source=github&utm_medium=readme&utm_campaign=phasetwo-containers). See the [announcement and demo video](https://phasetwo.io/blog/self-service/) for more information.
+
 # Phase Two Keycloak image
 
 Contains the base Phase Two Keycloak image that is used in the self-serve clusters (both for shared and dedicated). This is based on the a Keycloak image which differs from the mainline only in that it supports CockroachDB for the legacy store type.
