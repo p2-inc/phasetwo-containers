@@ -52,6 +52,15 @@ docker run -it --rm  --entrypoint /bin/bash phasetwo/phasetwo-keycloak-crdb:late
 docker-compose -f examples/cockroach/crdb-keycloak.yml up
 ```
 
+You can also try it in ephemeral development mode with:
+
+```
+docker run --name phasetwo_test -p 8080:8080 \
+    -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e KC_HTTP_RELATIVE_PATH=/auth \
+    quay.io/phasetwo/phasetwo-keycloak:latest \
+    start-dev
+```
+
 ## Releases
 
 https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags
