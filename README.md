@@ -14,7 +14,7 @@ This distribution contains the following extensions:
 | User Migration | :white_check_mark: | https://github.com/p2-inc/keycloak-user-migration | User migration storage provider and API client. |
 | Organizations | :white_check_mark: | https://github.com/p2-inc/keycloak-orgs | Organizations multi-tenant entities, resources and APIs. |
 | Magic Link | :white_check_mark: | https://github.com/p2-inc/keycloak-magic-link | Magic Link Authentication. Created with an Authenticator or Resource. |
-| Admin UI | :white_check_mark: | https://github.com/p2-inc/keycloak-admin-ui | Admin UI customizations. |
+| Admin UI | :white_check_mark: | https://github.com/p2-inc/keycloak-ui | Admin UI customizations. |
 | Home IdP Discovery | :white_check_mark: | https://github.com/sventorben/keycloak-home-idp-discovery | Discover home identity provider or realm by email domain. |
 | Login Theme | *Fall 2022* | | Customizable login theme. |
 

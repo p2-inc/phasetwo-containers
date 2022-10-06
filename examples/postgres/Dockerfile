@@ -1,4 +1,4 @@
-FROM quay.io/phasetwo/phasetwo-keycloak:latest as builder
+FROM quay.io/phasetwo/phasetwo-keycloak:19.0.3-alpha as builder
 
 ENV KC_DB=postgres
 ENV KC_HTTP_RELATIVE_PATH=/auth
@@ -8,7 +8,7 @@ COPY ./../../conf/cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-pi
 
 RUN /opt/keycloak/bin/kc.sh build
 
-FROM quay.io/phasetwo/phasetwo-keycloak:latest
+FROM quay.io/phasetwo/phasetwo-keycloak:19.0.3-alpha
 
 COPY --from=builder /opt/keycloak/lib/quarkus/ /opt/keycloak/lib/quarkus/
 COPY --from=builder /opt/keycloak/providers/ /opt/keycloak/providers/
