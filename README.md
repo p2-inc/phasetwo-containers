@@ -66,3 +66,4 @@ docker run --name phasetwo_test -p 8080:8080 \
 https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags
 
 - 19.0.1-alpha
+- 19.0.3-alpha
