@@ -67,3 +67,4 @@ https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags
 
 - 19.0.1-alpha
 - 19.0.3-alpha
+- 20.0.0-alpha
