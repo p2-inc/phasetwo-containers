@@ -16,7 +16,7 @@ ENV KC_FEATURES=preview
 # 3rd party themes and extensions
 COPY ./lib/*.jar /opt/keycloak/providers/
 
-RUN /opt/keycloak/bin/kc.sh build
+RUN /opt/keycloak/bin/kc.sh --verbose build
 
 FROM quay.io/phasetwo/keycloak-crdb:20.0.0
 
