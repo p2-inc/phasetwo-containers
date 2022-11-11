@@ -1,4 +1,4 @@
-FROM quay.io/phasetwo/keycloak-crdb:20.0.0 as builder
+FROM quay.io/phasetwo/keycloak-crdb:20.0.1 as builder
 
 ENV KC_METRICS_ENABLED=true
 ENV KC_HEALTH_ENABLED=true
@@ -18,7 +18,7 @@ COPY ./lib/*.jar /opt/keycloak/providers/
 
 RUN /opt/keycloak/bin/kc.sh --verbose build
 
-FROM quay.io/phasetwo/keycloak-crdb:20.0.0
+FROM quay.io/phasetwo/keycloak-crdb:20.0.1
 
 COPY --from=builder /opt/keycloak/lib/quarkus/ /opt/keycloak/lib/quarkus/
 COPY --from=builder /opt/keycloak/providers/ /opt/keycloak/providers/
