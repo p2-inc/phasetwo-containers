@@ -15,8 +15,7 @@ This distribution contains the following extensions:
 | Organizations | :white_check_mark: | https://github.com/p2-inc/keycloak-orgs | Organizations multi-tenant entities, resources and APIs. |
 | Magic Link | :white_check_mark: | https://github.com/p2-inc/keycloak-magic-link | Magic Link Authentication. Created with an Authenticator or Resource. |
 | Admin UI | :white_check_mark: | https://github.com/p2-inc/keycloak-ui | Admin UI customizations. |
-| Home IdP Discovery | :white_check_mark: | https://github.com/sventorben/keycloak-home-idp-discovery | Discover home identity provider or realm by email domain. |
-| Login Theme | *Fall 2022* | | Customizable login theme. |
+| Themes |  :white_check_mark: | https://github.com/p2-inc/keycloak-themes | Login and email theme customizations via Realm attributes without deploying an extension. |
 
 Also, the distribution contains the `keycloak-admin-client` and the dependencies required to run it in this version without Resteasy dependency hell.
 
@@ -47,6 +46,15 @@ docker push quay.io/phasetwo/phasetwo-keycloak:$VERSION
 
 ## Testing
 
+You can try it in ephemeral development mode with:
+
+```
+docker run --name phasetwo_test --rm -p 8080:8080 \
+    -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e KC_HTTP_RELATIVE_PATH=/auth \
+    quay.io/phasetwo/phasetwo-keycloak:latest \
+    start-dev
+```
+
 There are examples for Postgres and Cockroach in the `examples/` directory. E.g.:
 
 ```
@@ -56,15 +64,6 @@ docker build -t phasetwo/phasetwo-keycloak-crdb:latest -f examples/cockroach/Doc
 docker run -it --rm  --entrypoint /bin/bash phasetwo/phasetwo-keycloak-crdb:latest
 # Run it with a single-node crdb instance and caddy as a reverse proxy
 docker-compose -f examples/cockroach/crdb-keycloak.yml up
-```
-
-You can also try it in ephemeral development mode with:
-
-```
-docker run --name phasetwo_test --rm -p 8080:8080 \
-    -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e KC_HTTP_RELATIVE_PATH=/auth \
-    quay.io/phasetwo/phasetwo-keycloak:latest \
-    start-dev
 ```
 
 ## Releases
