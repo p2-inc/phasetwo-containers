@@ -14,7 +14,8 @@ ENV KC_FEATURES=preview
 #COPY ./conf/keycloak.conf /opt/keycloak/conf/keycloak.conf
 
 # 3rd party themes and extensions
-COPY ./lib/*.jar /opt/keycloak/providers/
+COPY ./libs/ext/*.jar /opt/keycloak/providers/
+COPY ./libs/target/container*/*.jar /opt/keycloak/providers/
 
 RUN /opt/keycloak/bin/kc.sh --verbose build
 
