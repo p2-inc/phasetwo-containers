@@ -51,7 +51,7 @@ You can try it in ephemeral development mode with:
 ```
 docker run --name phasetwo_test --rm -p 8080:8080 \
     -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e KC_HTTP_RELATIVE_PATH=/auth \
-    quay.io/phasetwo/phasetwo-keycloak:latest \
+    quay.io/phasetwo/phasetwo-keycloak:$VERSION \
     start-dev
 ```
 
@@ -73,3 +73,4 @@ https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags
 - 19.0.1-alpha
 - 19.0.3-alpha
 - 20.0.0-alpha
+- 20.0.1-alpha

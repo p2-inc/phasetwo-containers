@@ -10,4 +10,6 @@ mvn clean install
 cd ../
 docker rmi -f quay.io/phasetwo/phasetwo-keycloak:$VERSION
 docker build -t quay.io/phasetwo/phasetwo-keycloak:$VERSION -f Dockerfile .
-docker push quay.io/phasetwo/phasetwo-keycloak:$VERSION
+
+echo "run manually"
+echo "docker push quay.io/phasetwo/phasetwo-keycloak:$VERSION"
