@@ -52,7 +52,7 @@ You can try it in ephemeral development mode with:
 docker run --name phasetwo_test --rm -p 8080:8080 \
     -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e KC_HTTP_RELATIVE_PATH=/auth \
     quay.io/phasetwo/phasetwo-keycloak:$VERSION \
-    start-dev
+    start-dev --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true
 ```
 
 There are examples for Postgres and Cockroach in the `examples/` directory. E.g.:
