@@ -21,6 +21,13 @@ RUN /opt/keycloak/bin/kc.sh --verbose build --spi-email-template-provider=freema
 
 FROM quay.io/phasetwo/keycloak-crdb:20.0.1
 
+USER root
+
+# remediation for vulnerabilities
+RUN microdnf update -y && microdnf clean all && rm -rf /var/cache/yum/* && rm -f /tmp/tls-ca-bundle.pem
+
+USER 1000
+
 COPY --from=builder /opt/keycloak/lib/quarkus/ /opt/keycloak/lib/quarkus/
 COPY --from=builder /opt/keycloak/providers/ /opt/keycloak/providers/
 
