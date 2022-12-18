@@ -36,7 +36,7 @@ jobs:
       -
         name: Version hack
         run: |
-          $version = "20.0.2.($($Env:GITHUB_RUN_NUMBER)-3)+""
+          $version = "20.0.2."+($($Env:GITHUB_RUN_NUMBER)-3)+""
           echo $version
           echo "VERSION_NUMBER=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
       -
