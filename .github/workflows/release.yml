@@ -34,15 +34,14 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       -
-        name: Version hack
+        name: Version
         env:
-          NUM: ${{ github.run_number }}
+          BASE: 20.0.2
         run: |
-          echo ::set-env name=GITHUB_RUN_NUMBER_WITH_OFFSET::$(($NUM-6))
-          echo $GITHUB_RUN_NUMBER_WITH_OFFSET
-          $version = "20.0.2."+$GITHUB_RUN_NUMBER_WITH_OFFSET
-          echo $version
-          echo "VERSION_NUMBER=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+          TS=$(date +%s)
+          VERSION=$BASE.$TS
+          echo $VERSION
+          echo "VERSION_NUMBER=$VERSION" >> $GITHUB_ENV
       -
         name: Build and push
         uses: docker/build-push-action@v3
