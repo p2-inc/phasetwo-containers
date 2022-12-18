@@ -34,6 +34,12 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       -
+        name: Version hack
+        run: |
+          $version = "20.0.2.($($Env:GITHUB_RUN_NUMBER)-3)+""
+          echo $version
+          echo "VERSION_NUMBER=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
+      -
         name: Build and push
         uses: docker/build-push-action@v3
         with:
@@ -42,4 +48,4 @@ jobs:
           push: true
           tags: |
             quay.io/phasetwo/phasetwo-keycloak:latest
-            quay.io/phasetwo/phasetwo-keycloak:20.0.2.${{ github.run_number }}
+            quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_NUMBER }}
