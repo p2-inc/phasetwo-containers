@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  login:
+  release:
     runs-on: ubuntu-latest
     steps:
       -
@@ -35,8 +35,12 @@ jobs:
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       -
         name: Version hack
+        env:
+          NUM: ${{ github.run_number }}
         run: |
-          $version = "20.0.2."+$((${{ github.run_number }}-5))+""
+          echo ::set-env name=GITHUB_RUN_NUMBER_WITH_OFFSET::$(($NUM-6))
+          echo $GITHUB_RUN_NUMBER_WITH_OFFSET
+          $version = "20.0.2."+$GITHUB_RUN_NUMBER_WITH_OFFSET
           echo $version
           echo "VERSION_NUMBER=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
       -
