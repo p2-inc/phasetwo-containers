@@ -42,4 +42,4 @@ jobs:
           push: true
           tags: |
             quay.io/phasetwo/phasetwo-keycloak:latest
-            quay.io/phasetwo/phasetwo-keycloak:20.0.1.${{ github.run_number }}
+            quay.io/phasetwo/phasetwo-keycloak:20.0.2.${{ github.run_number }}

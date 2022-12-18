@@ -21,13 +21,13 @@ Also, the distribution contains the `keycloak-admin-client` and the dependencies
 
 ## Versioning
 
-Format for version is `<keycloak-version>-<phasetwo-minor-version>` e.g. `20.0.1-alpha`, `20.0.1-0`
+Format for version is `<keycloak-version>-<phasetwo-minor-version>` e.g. `20.0.2.alpha`, `20.0.2.1`
 
 ## Building
 
 ```
 # set the version number
-export VERSION=20.0.1-alpha
+export VERSION=20.0.2.1
 # build the libs project
 cd libs/
 mvn install
@@ -69,8 +69,3 @@ docker-compose -f examples/cockroach/crdb-keycloak.yml up
 ## Releases
 
 https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags
-
-- 19.0.1-alpha
-- 19.0.3-alpha
-- 20.0.0-alpha
-- 20.0.1-alpha
