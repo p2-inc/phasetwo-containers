@@ -21,19 +21,15 @@ Also, the distribution contains the `keycloak-admin-client` and the dependencies
 
 ## Versioning
 
-Format for version is `<keycloak-version>-<phasetwo-minor-version>` e.g. `20.0.2.alpha`, `20.0.2.1`
+Format for version is `<keycloak-version>-<build-timestamp>` e.g. `20.0.2.1671386163`
 
 ## Building
 
 ```
-# set the version number
-export VERSION=20.0.2.1
 # build the libs project
 cd libs/
-mvn install
+mvn package
 cd ..
-# remove the old image if necessary
-docker rmi -f quay.io/phasetwo/phasetwo-keycloak:$VERSION
 # build the image
 docker build -t quay.io/phasetwo/phasetwo-keycloak:$VERSION -f Dockerfile .
 ```
