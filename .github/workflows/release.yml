@@ -19,7 +19,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Build with Maven
-        run: cd libs/ && mvn --batch-mode package && cd ../
+        run: cd libs/ && mvn -U --batch-mode package && cd ../
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
