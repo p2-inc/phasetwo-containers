@@ -36,7 +36,7 @@ jobs:
       -
         name: Version
         env:
-          BASE: 20.0.3
+          BASE: 21.0.1
         run: |
           TS=$(date +%s)
           VERSION=$BASE.$TS
