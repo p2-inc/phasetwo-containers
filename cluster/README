@@ -6,29 +6,5 @@
 ## building on-prem internal image
 
 ```bash
-cd cluster
-
-MODULE=idp-wizard
-echo "Building $MODULE"
-git clone https://${github_user}:${github_pat}@github.com/p2-inc/$MODULE.git
-cd $MODULE
-git checkout main && git rev-parse HEAD
-mvn -B clean install
-cp target/$MODULE*.jar ../lib/
-
-cd ../
-
-MODULE=admin-portal
-echo "Building $MODULE"
-git clone https://${github_user}:${github_pat}@github.com/p2-inc/$MODULE.git
-cd $MODULE
-git checkout main && git rev-parse HEAD
-mvn -B clean install
-cp target/$MODULE*.jar ../lib/
-
-cd ../../
-TAG_VERSION=$VERSION.$(date +%s)
-echo Building the Docker image phasetwo-cluster:$TAG_VERSION...
-docker buildx build --platform linux/amd64,linux/arm64z --tag quay.io/phasetwo/phasetwo-cluster:latest --tag quay.io/phasetwo/phasetwo-cluster:$TAG_VERSION --push .
-
+./build-nodb.sh 21.0.1
 ```
