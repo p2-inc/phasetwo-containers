@@ -49,3 +49,13 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: "{{defaultContext}}:cluster"
+          file: "{context}/Dockerfile_nodb"
+          platforms: linux/amd64,linux/arm64
+          push: false
+          tags: |
+            quay.io/phasetwo/phasetwo-cluster:latest
+            quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_NUMBER }}
