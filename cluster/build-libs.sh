@@ -1,7 +1,5 @@
 #!/bin/bash
 
-checkout_build $1
-
 function checkout_build {
     echo "Building $1"
     GIT_SSH_COMMAND="ssh -v" git clone --verbose git@github.com:p2-inc/$1.git
@@ -12,3 +10,6 @@ function checkout_build {
     cd ../
     rm -rf $1
 }
+
+checkout_build $1
+
