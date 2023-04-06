@@ -18,20 +18,27 @@ jobs:
           VERSION=$BASE.$TS
           echo $VERSION
           echo "VERSION_NUMBER=$VERSION" >> $GITHUB_ENV
-      - name: Set ssh keys
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: |
-            ${{ secrets.IDP_WIZARD_SSH_KEY }}
-            ${{ secrets.ADMIN_PORTAL_SSH_KEY }}
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
           java-version: "11"
           distribution: adopt
+      - name: Set ssh keys
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: |
+            ${{ secrets.IDP_WIZARD_SSH_KEY }}
       - name: Build with Maven
-        run: cd cluster/ && ./build-libs.sh && cp ../conf/cache-ispn-jdbc-ping.xml . &&
-          cd ../
+        run: cd cluster/ && ./build-libs.sh idp-wizard && cd ../
+      - name: Remove ssh identities
+        run: ssh-add -D
+      - name: Set ssh keys
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: |
+            ${{ secrets.ADMIN_PORTAL_SSH_KEY }}
+      - name: Build with Maven
+        run: cd cluster/ && ./build-libs.sh admin-portal && cp ../conf/cache-ispn-jdbc-ping.xml . && cd ../
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
