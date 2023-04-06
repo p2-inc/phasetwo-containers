@@ -5,7 +5,7 @@ function checkout_build {
     git clone git@github.com:p2-inc/$1.git
     cd $1
     git checkout main && git rev-parse HEAD
-    mvn -B clean package
+    CI=false mvn -B clean package
     cp target/$1*.jar ../lib/
     cd ../
     rm -rf $1
