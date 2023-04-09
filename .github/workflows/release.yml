@@ -6,35 +6,29 @@ on:
       - main
 
 jobs:
-  release:
+  release-public:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
-      -
-        name: Set up JDK 11
+      - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          java-version: "11"
+          distribution: adopt
       - name: Build with Maven
         run: cd libs/ && mvn -U --batch-mode package && cd ../
-      -
-        name: Set up QEMU
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
-      -
-        name: Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      -
-        name: Login to Quay.io
+      - name: Login to Quay.io
         uses: docker/login-action@v2
         with:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
-      -
-        name: Version
+      - name: Version
         env:
           BASE: 21.0.2
         run: |
@@ -42,8 +36,7 @@ jobs:
           VERSION=$BASE.$TS
           echo $VERSION
           echo "VERSION_NUMBER=$VERSION" >> $GITHUB_ENV
-      -
-        name: Build and push
+      - name: Build and push
         uses: docker/build-push-action@v3
         with:
           context: .
@@ -52,3 +45,57 @@ jobs:
           tags: |
             quay.io/phasetwo/phasetwo-keycloak:latest
             quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_NUMBER }}
+  release-cluster:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Version
+        env:
+          BASE: 21.0.2
+        run: |
+          TS=$(date +%s)
+          VERSION=$BASE.$TS
+          echo $VERSION
+          echo "VERSION_NUMBER=$VERSION" >> $GITHUB_ENV
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: "11"
+          distribution: adopt
+      - name: Set ssh keys
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: |
+            ${{ secrets.IDP_WIZARD_SSH_KEY }}
+      - name: Build with Maven
+        run: cd cluster/ && ./build-libs.sh idp-wizard && cd ../
+      - name: Remove ssh identities
+        run: ssh-add -D
+      - name: Set ssh keys
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: |
+            ${{ secrets.ADMIN_PORTAL_SSH_KEY }}
+      - name: Build with Maven
+        run: cd cluster/ && ./build-libs.sh admin-portal && cp ../conf/cache-ispn-jdbc-ping.xml . && cd ../
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to Quay.io
+        uses: docker/login-action@v2
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: "cluster/"
+          file: "cluster/Dockerfile_nodb"
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            quay.io/phasetwo/phasetwo-cluster:latest
+            quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_NUMBER }}
