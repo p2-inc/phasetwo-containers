@@ -46,6 +46,7 @@ jobs:
             quay.io/phasetwo/phasetwo-keycloak:latest
             quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_NUMBER }}
   release-cluster:
+    needs: release-public
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -95,6 +96,7 @@ jobs:
           context: "cluster/"
           file: "cluster/Dockerfile_nodb"
           platforms: linux/amd64,linux/arm64
+          pull: true
           push: true
           tags: |
             quay.io/phasetwo/phasetwo-cluster:latest
