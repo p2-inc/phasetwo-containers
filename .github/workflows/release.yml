@@ -94,7 +94,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: "cluster/"
-          file: "cluster/Dockerfile_nodb"
+          file: "cluster/Dockerfile"
           platforms: linux/amd64,linux/arm64
           pull: true
           push: true
