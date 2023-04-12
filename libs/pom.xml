@@ -24,7 +24,7 @@
     <resteasy.version>4.7.7.Final</resteasy.version>
     <keycloak-events.version>[0.12,)</keycloak-events.version>
     <keycloak-magic-link.version>[0.8,)</keycloak-magic-link.version>
-    <keycloak-orgs.version>[0.23,)</keycloak-orgs.version>
+    <keycloak-orgs.version>[0.25,)</keycloak-orgs.version>
     <keycloak-themes.version>[0.13,)</keycloak-themes.version>
   </properties>
 
