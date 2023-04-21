@@ -1,12 +1,13 @@
-# Keycloak config for bare metal installations
-This readme covers how to deploy a Keycloak instance on bare metal
+# Installing the Phase Two library in an unpacked Keycloak (aka "bare metal installations")
+
+This README covers how to deploy a Keycloak instance on bare metal
 
 ### Installation
 Make sure you have at least JDK 11 or higher installed
 
 Download [Keycloak](https://www.keycloak.org/downloads)
 
-Extract the zip archive
+Extract the zip or gz archive
 
 ### Configuration
 
