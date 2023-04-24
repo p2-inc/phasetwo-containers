@@ -45,6 +45,11 @@ jobs:
           tags: |
             quay.io/phasetwo/phasetwo-keycloak:latest
             quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_NUMBER }}
+      - name: Tag
+        uses: cardinalby/git-tag-action@master
+        env:
+          TAG: v${{ env.VERSION_NUMBER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   release-cluster:
     needs: release-public
     runs-on: ubuntu-latest
