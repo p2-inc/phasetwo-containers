@@ -30,7 +30,7 @@ jobs:
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       - name: Version
         env:
-          BASE: 21.0.2
+          BASE: 21.1.1
         run: |
           TS=$(date +%s)
           VERSION=$BASE.$TS
@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Version
         env:
-          BASE: 21.0.2
+          BASE: 21.1.1
         run: |
           TS=$(date +%s)
           VERSION=$BASE.$TS
