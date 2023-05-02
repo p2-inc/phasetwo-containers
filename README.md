@@ -11,11 +11,12 @@ This distribution contains the following extensions:
 | Component | Status | Repository | Description |
 | --- | --- | --- | --- |
 | Events | :white_check_mark: | https://github.com/p2-inc/keycloak-events | All event listener implementations. |
-| User Migration | :white_check_mark: | https://github.com/p2-inc/keycloak-user-migration | User migration storage provider and API client. |
-| Organizations | :white_check_mark: | https://github.com/p2-inc/keycloak-orgs | Organizations multi-tenant entities, resources and APIs. |
 | Magic Link | :white_check_mark: | https://github.com/p2-inc/keycloak-magic-link | Magic Link Authentication. Created with an Authenticator or Resource. |
-| Admin UI | :white_check_mark: | https://github.com/p2-inc/keycloak-ui | Admin UI customizations. |
+| Organizations | :white_check_mark: | https://github.com/p2-inc/keycloak-orgs | Organizations multi-tenant entities, resources and APIs. |
 | Themes |  :white_check_mark: | https://github.com/p2-inc/keycloak-themes | Login and email theme customizations via Realm attributes without deploying an extension. |
+| Admin UI | :white_check_mark: | https://github.com/p2-inc/keycloak-ui | Admin UI customizations. |
+| Admin Portal | :white_check_mark: | https://github.com/p2-inc/phasetwo-admin-portal | User self-management for their account and organizations. |
+| User Migration | :white_check_mark: | https://github.com/p2-inc/keycloak-user-migration | User migration storage provider and API client. |
 
 Also, the distribution contains the `keycloak-admin-client` and the dependencies required to run it in this version without Resteasy dependency hell.
 
