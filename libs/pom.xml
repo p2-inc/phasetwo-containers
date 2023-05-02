@@ -22,10 +22,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <keycloak.version>21.1.1</keycloak.version>
     <resteasy.version>4.7.7.Final</resteasy.version>
-    <keycloak-events.version>[0.13,)</keycloak-events.version>
-    <keycloak-magic-link.version>[0.9,)</keycloak-magic-link.version>
-    <keycloak-orgs.version>[0.28,)</keycloak-orgs.version>
-    <keycloak-themes.version>[0.14,)</keycloak-themes.version>
+    <keycloak-events.version>[0.14,)</keycloak-events.version>
+    <keycloak-magic-link.version>[0.11,)</keycloak-magic-link.version>
+    <keycloak-orgs.version>[0.29,)</keycloak-orgs.version>
+    <keycloak-themes.version>[0.16,)</keycloak-themes.version>
+    <phasetwo-admin-portal.version>[0.1,)</phasetwo-admin-portal.version>
   </properties>
 
   <dependencies>
@@ -48,6 +49,11 @@
       <groupId>io.phasetwo.keycloak</groupId>
       <artifactId>keycloak-themes</artifactId>
       <version>${keycloak-themes.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.phasetwo</groupId>
+      <artifactId>phasetwo-admin-portal</artifactId>
+      <version>${phasetwo-admin-portal.version}</version>
     </dependency>
     <dependency>
       <groupId>org.keycloak</groupId>
