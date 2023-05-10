@@ -8,7 +8,7 @@ ENV KC_FEATURES=preview
 #ENV KC_CACHE_CONFIG_FILE=cache-ispn-jdbc-ping.xml
 
 # jdbc_ping infinispan configuration
-#COPY ./conf/cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
+COPY ./conf/cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
 
 # custom keycloak.conf
 #COPY ./conf/keycloak.conf /opt/keycloak/conf/keycloak.conf
