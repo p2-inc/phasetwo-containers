@@ -17,7 +17,7 @@ COPY ./conf/cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
 COPY ./libs/ext/*.jar /opt/keycloak/providers/
 COPY ./libs/target/container*/*.jar /opt/keycloak/providers/
 
-RUN /opt/keycloak/bin/kc.sh --verbose build --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true
+RUN /opt/keycloak/bin/kc.sh --verbose build --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
 
 FROM quay.io/phasetwo/keycloak-crdb:21.1.1
 
@@ -30,6 +30,7 @@ USER 1000
 
 COPY --from=builder /opt/keycloak/lib/quarkus/ /opt/keycloak/lib/quarkus/
 COPY --from=builder /opt/keycloak/providers/ /opt/keycloak/providers/
+COPY --from=builder /opt/keycloak/conf/cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
 
 WORKDIR /opt/keycloak
 # this cert shouldn't be used, as it's just to stop the startup from complaining

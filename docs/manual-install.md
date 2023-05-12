@@ -36,7 +36,7 @@ Change your directory to your keycloak installation
 
 Execute the command 
 ```
-bin/kc.sh --verbose build --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true
+bin/kc.sh --verbose build --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
 ```
 > Please check if this command changed in the [Dockerfile](../Dockerfile)<br>
 > On Windows please use kc.bat instead of kc.sh everything else remains the same

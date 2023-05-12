@@ -45,7 +45,7 @@ services:
       - 8443:8443
     depends_on:
       - cockroach
-    entrypoint: /opt/keycloak/bin/kc.sh start --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true
+    entrypoint: /opt/keycloak/bin/kc.sh start --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
   caddy:
     image: caddy:2.4.6-alpine
     restart: unless-stopped
