@@ -30,7 +30,7 @@ jobs:
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       - name: Version
         env:
-          BASE: 21.1.1
+          BASE: 21.1.2
         run: |
           TS=$(date +%s)
           VERSION=$BASE.$TS
