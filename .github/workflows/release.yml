@@ -58,7 +58,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Version
         env:
-          BASE: 21.1.1
+          BASE: 21.1.2
         run: |
           TS=$(date +%s)
           VERSION=$BASE.$TS
