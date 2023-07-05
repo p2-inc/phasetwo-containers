@@ -23,10 +23,10 @@
     <keycloak.version>21.1.1</keycloak.version>
     <resteasy.version>4.7.7.Final</resteasy.version>
     <keycloak-events.version>[0.17,)</keycloak-events.version>
-    <keycloak-magic-link.version>[0.13,)</keycloak-magic-link.version>
+    <keycloak-magic-link.version>[0.14,)</keycloak-magic-link.version>
     <keycloak-orgs.version>[0.36,)</keycloak-orgs.version>
     <keycloak-themes.version>[0.17,)</keycloak-themes.version>
-    <phasetwo-admin-portal.version>[0.7,)</phasetwo-admin-portal.version>
+    <phasetwo-admin-portal.version>[0.8,)</phasetwo-admin-portal.version>
   </properties>
 
   <dependencies>
