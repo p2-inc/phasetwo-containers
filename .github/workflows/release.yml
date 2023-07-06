@@ -105,6 +105,6 @@ jobs:
         with:
           access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: ${{ env.AWS_ECR_REGION }}
+          region: ${{ vars.AWS_ECR_REGION }}
           local-image: quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_NUMBER }}
-          image: ${{ env.AWS_ECR_REGISTRY }}/phasetwo-cluster:latest, ${{ env.AWS_ECR_REGISTRY }}/phasetwo-cluster:${{ env.VERSION_NUMBER }}
+          image: phasetwo-cluster:latest, phasetwo-cluster:${{ env.VERSION_NUMBER }}
