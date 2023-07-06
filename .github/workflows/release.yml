@@ -88,6 +88,12 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+      - name: Login to ECR
+        uses: jwalton/gh-ecr-login@v2.0.4
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: ${{ vars.AWS_ECR_REGION }}
       - name: Build and push to quay
         uses: docker/build-push-action@v4
         with:
@@ -99,12 +105,5 @@ jobs:
           tags: |
             quay.io/phasetwo/phasetwo-cluster:latest
             quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_NUMBER }}
-      - name: Push to ECR
-        id: ecr
-        uses: jwalton/gh-ecr-push@v1.3.6
-        with:
-          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: ${{ vars.AWS_ECR_REGION }}
-          local-image: quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_NUMBER }}
-          image: phasetwo-cluster:latest, phasetwo-cluster:${{ env.VERSION_NUMBER }}
+            ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:latest
+            ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:${{ env.VERSION_NUMBER }}
