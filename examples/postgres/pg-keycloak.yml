@@ -18,7 +18,7 @@ services:
     ports:
       - 5433:5432
   keycloak:
-    image: phasetwo/phasetwo-keycloak-test-crdb:latest
+    image: quay.io/phasetwo/phasetwo-keycloak:latest
     environment:
       PROXY_ADDRESS_FORWARDING: 'true'
       KEYCLOAK_USER: admin
@@ -34,6 +34,7 @@ services:
       KC_HTTP_ENABLED: 'true'
       KC_PROXY: 'edge'
       KC_LOG_LEVEL: INFO
+    entrypoint: ["/opt/keycloak/bin/kc.sh", "start", "--spi-email-template-provider=freemarker-plus-mustache", "--spi-email-template-freemarker-plus-mustache-enabled=true", "--spi-theme-cache-themes=false"]
     ports:
       - 8080:8080
       - 8443:8443
