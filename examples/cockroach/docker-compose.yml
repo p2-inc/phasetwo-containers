@@ -15,7 +15,7 @@ services:
     ports:
       - 26257:26257
   keycloak:
-    image: quay.io/phasetwo/keycloak-crdb:latest
+    image: quay.io/phasetwo/phasetwo-keycloak:latest
     environment:
       KC_DB: cockroach
       KC_HTTP_RELATIVE_PATH: /auth
@@ -39,6 +39,7 @@ services:
       KC_LOG_LEVEL: INFO
       KC_TRANSACTION_XA_ENABLED: 'false'
       KC_TRANSACTION_JTA_ENABLED: 'false'
+    entrypoint: ["/opt/keycloak/bin/kc.sh", "start", "--spi-email-template-provider=freemarker-plus-mustache", "--spi-email-template-freemarker-plus-mustache-enabled=true", "--spi-theme-cache-themes=false"]
     ports:
       - 8080:8080
       - 8443:8443

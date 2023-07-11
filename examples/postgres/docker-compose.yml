@@ -1,45 +1,45 @@
 version: '3'
 
 volumes:
-  cockroach_data:
+  postgres_data:
     driver: local
   caddy_data:
     driver: local
 
 services:
-  cockroach:
-    image: cockroachdb/cockroach:latest
+  postgres:
+    image: postgres:11
     volumes:
-      - cockroach_data:/cockroach/cockroach-data
-    command: start-single-node --insecure
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
     ports:
-      - 26257:26257
+      - 5433:5432
   keycloak:
-    image: phasetwo/phasetwo-keycloak-crdb:latest
+    image: quay.io/phasetwo/phasetwo-keycloak:latest
     environment:
       PROXY_ADDRESS_FORWARDING: 'true'
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: password
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: password
-      KC_DB_URL_HOST: cockroach
-      KC_DB_URL_PORT: 26257
-      KC_DB_URL_DATABASE: defaultdb
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: keycloak
       KC_DB_SCHEMA: public
-      KC_DB_USERNAME: root
-      KC_DB_PASSWORD: ''
-      KC_DB_URL_PROPERTIES: '?'
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
       KC_HOSTNAME_STRICT: 'false'
       KC_HTTP_ENABLED: 'true'
       KC_PROXY: 'edge'
       KC_LOG_LEVEL: INFO
-      KC_TRANSACTION_XA_ENABLED: 'false'
-      KC_TRANSACTION_JTA_ENABLED: 'false'
-    ports:
+    entrypoint: ["/opt/keycloak/bin/kc.sh", "start", "--spi-email-template-provider=freemarker-plus-mustache", "--spi-email-template-freemarker-plus-mustache-enabled=true", "--spi-theme-cache-themes=false"]
+￼   ports:
       - 8080:8080
       - 8443:8443
     depends_on:
-      - cockroach
+      - postgres
   caddy:
     image: caddy:2.4.6-alpine
     restart: unless-stopped
