@@ -2,7 +2,7 @@
 
 # Phase Two Keycloak image
 
-Contains the base Phase Two Keycloak image that is used in the self-serve clusters (both for shared and dedicated). This is based on the a Keycloak image which differs from the mainline only in that it supports CockroachDB for the legacy store type.
+Contains the base Phase Two Keycloak image that is used in the self-serve clusters (both for shared and dedicated). This is based on the a Keycloak image which differs from the mainline only in that it supports [Keycloak on CockroachDB](https://quay.io/repository/phasetwo/keycloak-crdb?tab=info) for the legacy store type.
 
 ## Extensions
 
@@ -43,7 +43,7 @@ docker push quay.io/phasetwo/phasetwo-keycloak:$VERSION
 
 ## Testing
 
-You can try it in ephemeral development mode with:
+You can try it in ephemeral, development mode with:
 
 ```
 docker run --name phasetwo_test --rm -p 8080:8080 \
