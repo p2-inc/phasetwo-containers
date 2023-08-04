@@ -37,7 +37,6 @@ jobs:
       - name: Version
         run: |
           TS=$(date +%s)
-          echo $VERSION
           echo "VERSION_MAJOR=$VERSION_MAJOR" >> $GITHUB_ENV
           echo "VERSION_SUBMAJOR=$VERSION_SUBMAJOR" >> $GITHUB_ENV
           echo "VERSION_MINOR=$VERSION_MINOR" >> $GITHUB_ENV
@@ -68,7 +67,6 @@ jobs:
       - name: Version
         run: |
           TS=$(date +%s)
-          echo $VERSION
           echo "VERSION_MAJOR=$VERSION_MAJOR" >> $GITHUB_ENV
           echo "VERSION_SUBMAJOR=$VERSION_SUBMAJOR" >> $GITHUB_ENV
           echo "VERSION_MINOR=$VERSION_MINOR" >> $GITHUB_ENV
