@@ -20,9 +20,25 @@ This distribution contains the following extensions:
 
 Also, the distribution contains the `keycloak-admin-client` and the dependencies required to run it in this version without Resteasy dependency hell.
 
+## Differences
+
+This packages a `cache-ispn-jdbc-ping.xml` for setting up Infinispan/JGroups discovery via the `JDBC` ping protocol. To use it, set the environment variable `KC_CACHE_CONFIG_FILE: cache-jdbc-persistent.xml`.
+
+Because you may want to use a different driver class, and the url string differs from that of Keycloak, we have added 2 variables:
+```
+KC_ISPN_DB_DRIVER   # default is 'org.postgresql.Driver'
+KC_ISPN_DB_VENDOR   # default is 'postgresql'
+```
+
 ## Versioning
 
-Format for version is `<keycloak-version>-<build-timestamp>` e.g. `20.0.2.1671386163`
+Format for version is `<keycloak-version>-<build-timestamp>` e.g. `21.1.2.1688664025`.
+
+There will also be major/minor/patch version tags released. E.g.
+- `21`
+- `21.1`
+- `21.1.2`
+- `21.1.2.1688664025`
 
 ## Building
 
