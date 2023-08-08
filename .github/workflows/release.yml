@@ -5,16 +5,22 @@ on:
     branches:
       - main
 
+env:
+  # Version 22.0.1
+  VERSION_MAJOR: 22
+  VERSION_SUBMAJOR: 0
+  VERSION_MINOR: 1
+
 jobs:
   release-public:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: "11"
+          java-version: "17"
           distribution: adopt
       - name: Build with Maven
         run: cd libs/ && mvn -U --batch-mode package && cd ../
@@ -29,13 +35,12 @@ jobs:
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
       - name: Version
-        env:
-          BASE: 22.0.0
         run: |
           TS=$(date +%s)
-          VERSION=$BASE.$TS
-          echo $VERSION
-          echo "VERSION_NUMBER=$VERSION" >> $GITHUB_ENV
+          echo "VERSION_MAJOR=$VERSION_MAJOR" >> $GITHUB_ENV
+          echo "VERSION_SUBMAJOR=$VERSION_SUBMAJOR" >> $GITHUB_ENV
+          echo "VERSION_MINOR=$VERSION_MINOR" >> $GITHUB_ENV
+          echo "VERSION_TS=$TS" >> $GITHUB_ENV
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
@@ -44,7 +49,10 @@ jobs:
           push: true
           tags: |
             quay.io/phasetwo/phasetwo-keycloak:latest
-            quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_NUMBER }}
+            quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_MAJOR }}
+            quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}
+            quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}
+            quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}.${{ env.VERSION_TS }}
       - name: Tag
         uses: cardinalby/git-tag-action@master
         env:
@@ -57,17 +65,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Version
-        env:
-          BASE: 22.0.0
         run: |
           TS=$(date +%s)
-          VERSION=$BASE.$TS
-          echo $VERSION
-          echo "VERSION_NUMBER=$VERSION" >> $GITHUB_ENV
-      - name: Set up JDK 11
+          echo "VERSION_MAJOR=$VERSION_MAJOR" >> $GITHUB_ENV
+          echo "VERSION_SUBMAJOR=$VERSION_SUBMAJOR" >> $GITHUB_ENV
+          echo "VERSION_MINOR=$VERSION_MINOR" >> $GITHUB_ENV
+          echo "VERSION_TS=$TS" >> $GITHUB_ENV
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: "11"
+          java-version: "17"
           distribution: adopt
       - name: Set ssh keys
         uses: webfactory/ssh-agent@v0.7.0
@@ -104,6 +111,12 @@ jobs:
           push: true
           tags: |
             quay.io/phasetwo/phasetwo-cluster:latest
-            quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_NUMBER }}
+            quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_MAJOR }}
+            quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}
+            quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}
+            quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}.${{ env.VERSION_TS }}
             ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:latest
-            ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:${{ env.VERSION_NUMBER }}
+            ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:${{ env.VERSION_MAJOR }}
+            ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}
+            ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}
+            ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}.${{ env.VERSION_TS }}
