@@ -6,10 +6,10 @@ on:
       - main
 
 env:
-  # Version 21.1.2
-  VERSION_MAJOR: 21
-  VERSION_SUBMAJOR: 1
-  VERSION_MINOR: 2
+  # Version 22.0.1
+  VERSION_MAJOR: 22
+  VERSION_SUBMAJOR: 0
+  VERSION_MINOR: 1
 
 jobs:
   release-public:

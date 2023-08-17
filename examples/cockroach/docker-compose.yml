@@ -1,0 +1,59 @@
+version: '3'
+
+volumes:
+  cockroach_data:
+    driver: local
+  caddy_data:
+    driver: local
+
+services:
+  cockroach:
+    image: cockroachdb/cockroach:latest
+    volumes:
+      - cockroach_data:/cockroach/cockroach-data
+    command: start-single-node --insecure
+    ports:
+      - 26257:26257
+  keycloak:
+    image: quay.io/phasetwo/phasetwo-keycloak:latest
+    environment:
+      KC_DB: cockroach
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_TRANSACTION_XA_ENABLED: false
+      KC_TRANSACTION_JTA_ENABLED: false
+      PROXY_ADDRESS_FORWARDING: 'true'
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: password
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: password
+      KC_DB_URL_HOST: cockroach
+      KC_DB_URL_PORT: 26257
+      KC_DB_URL_DATABASE: defaultdb
+      KC_DB_SCHEMA: public
+      KC_DB_USERNAME: root
+      KC_DB_PASSWORD: ''
+      KC_DB_URL_PROPERTIES: '?'
+      KC_HOSTNAME_STRICT: 'false'
+      KC_HTTP_ENABLED: 'true'
+      KC_PROXY: 'edge'
+      KC_LOG_LEVEL: INFO
+      KC_TRANSACTION_XA_ENABLED: 'false'
+      KC_TRANSACTION_JTA_ENABLED: 'false'
+    entrypoint: ["/opt/keycloak/bin/kc.sh", "start", "--spi-email-template-provider=freemarker-plus-mustache", "--spi-email-template-freemarker-plus-mustache-enabled=true", "--spi-theme-cache-themes=false"]
+    ports:
+      - 8080:8080
+      - 8443:8443
+    depends_on:
+      - cockroach
+    entrypoint: /opt/keycloak/bin/kc.sh start
+  caddy:
+    image: caddy:2.4.6-alpine
+    restart: unless-stopped
+    command: caddy reverse-proxy --from https://localhost:443 --to http://keycloak:8080
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - caddy_data:/data
+    depends_on:
+      - keycloak
