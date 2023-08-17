@@ -12,6 +12,7 @@ COPY ./conf/cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
 
 # custom keycloak.conf
 #COPY ./conf/keycloak.conf /opt/keycloak/conf/keycloak.conf
+#COPY ./conf/quarkus.properties /opt/keycloak/conf/quarkus.properties
 
 # 3rd party themes and extensions
 COPY ./libs/ext/*.jar /opt/keycloak/providers/
@@ -31,6 +32,8 @@ USER 1000
 COPY --from=builder /opt/keycloak/lib/quarkus/ /opt/keycloak/lib/quarkus/
 COPY --from=builder /opt/keycloak/providers/ /opt/keycloak/providers/
 COPY --from=builder /opt/keycloak/conf/cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
+#COPY --from=builder /opt/keycloak/conf/quarkus.properties /opt/keycloak/conf/quarkus.properties
+#COPY --from=builder /opt/keycloak/conf/keycloak.conf /opt/keycloak/conf/keycloak.conf
 
 WORKDIR /opt/keycloak
 # this cert shouldn't be used, as it's just to stop the startup from complaining
