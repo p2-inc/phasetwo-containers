@@ -6,10 +6,10 @@ on:
       - main
 
 env:
-  # Version 22.0.2
+  # Version 22.0.3
   VERSION_MAJOR: 22
   VERSION_SUBMAJOR: 0
-  VERSION_MINOR: 2
+  VERSION_MINOR: 3
 
 jobs:
   release-public:
@@ -41,6 +41,7 @@ jobs:
           echo "VERSION_SUBMAJOR=$VERSION_SUBMAJOR" >> $GITHUB_ENV
           echo "VERSION_MINOR=$VERSION_MINOR" >> $GITHUB_ENV
           echo "VERSION_TS=$TS" >> $GITHUB_ENV
+          echo "VERSION_TAG=$VERSION_MAJOR.$VERSION_SUBMAJOR.$VERSION_MINOR.$VERSION_TS" >> $GITHUB_ENV
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
@@ -56,7 +57,7 @@ jobs:
       - name: Tag
         uses: cardinalby/git-tag-action@master
         env:
-          TAG: v${{ env.VERSION_NUMBER }}
+          TAG: v${{ env.VERSION_TAG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   release-cluster:
     needs: release-public
