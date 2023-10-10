@@ -26,7 +26,7 @@
     <keycloak-magic-link.version>0.20</keycloak-magic-link.version>
     <keycloak-orgs.version>0.42</keycloak-orgs.version>
     <keycloak-themes.version>0.18</keycloak-themes.version>
-    <phasetwo-admin-portal.version>0.11</phasetwo-admin-portal.version>
+    <phasetwo-admin-portal.version>0.12</phasetwo-admin-portal.version>
   </properties>
 
   <dependencies>
