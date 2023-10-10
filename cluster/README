@@ -1,10 +1,3 @@
 # cluster image
 
-- `Dockerfile`: Used from p2 CI to build images for shared and dedicated clusters
-- `Dockerfile_nodb`: Used to build quay.io/phasetwo/phasetwo-cluster images for on-prem licensees
-
-## building on-prem internal image
-
-```bash
-./build-nodb.sh 21.0.1
-```
+- `Dockerfile`: Used to build quay.io/phasetwo/phasetwo-cluster images
