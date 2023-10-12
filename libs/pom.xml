@@ -24,7 +24,7 @@
     <resteasy.version>6.2.4.Final</resteasy.version>
     <keycloak-events.version>0.20</keycloak-events.version>
     <keycloak-magic-link.version>0.20</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.42</keycloak-orgs.version>
+    <keycloak-orgs.version>0.43</keycloak-orgs.version>
     <keycloak-themes.version>0.18</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.12</phasetwo-admin-portal.version>
   </properties>
