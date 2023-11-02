@@ -20,9 +20,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <keycloak.version>22.0.4</keycloak.version>
+    <keycloak.version>22.0.5</keycloak.version>
     <resteasy.version>6.2.4.Final</resteasy.version>
-    <keycloak-events.version>0.20</keycloak-events.version>
+    <keycloak-events.version>0.21</keycloak-events.version>
     <keycloak-magic-link.version>0.20</keycloak-magic-link.version>
     <keycloak-orgs.version>0.43</keycloak-orgs.version>
     <keycloak-themes.version>0.18</keycloak-themes.version>
