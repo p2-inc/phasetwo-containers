@@ -34,7 +34,7 @@ services:
       KC_HOSTNAME_STRICT: 'false'
       KC_HTTP_ENABLED: 'true'
       KC_PROXY: 'edge'
-      KC_LOG_LEVEL: INFO
+      KC_LOG_LEVEL: "INFO,io.phasetwo:DEBUG"
       KC_TRANSACTION_XA_ENABLED: 'false'
       KC_TRANSACTION_JTA_ENABLED: 'false'
       KC_FEATURES: preview,admin2

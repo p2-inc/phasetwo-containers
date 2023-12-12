@@ -20,13 +20,13 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <keycloak.version>22.0.5</keycloak.version>
+    <keycloak.version>23.0.1</keycloak.version>
     <resteasy.version>6.2.4.Final</resteasy.version>
-    <keycloak-events.version>0.22</keycloak-events.version>
-    <keycloak-magic-link.version>0.21</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.45</keycloak-orgs.version>
-    <keycloak-themes.version>0.18</keycloak-themes.version>
-    <phasetwo-admin-portal.version>0.15</phasetwo-admin-portal.version>
+    <keycloak-events.version>0.23</keycloak-events.version>
+    <keycloak-magic-link.version>0.22</keycloak-magic-link.version>
+    <keycloak-orgs.version>0.47</keycloak-orgs.version>
+    <keycloak-themes.version>0.19</keycloak-themes.version>
+    <phasetwo-admin-portal.version>0.18</phasetwo-admin-portal.version>
   </properties>
 
   <dependencies>
