@@ -20,12 +20,12 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <keycloak.version>23.0.1</keycloak.version>
+    <keycloak.version>23.0.3</keycloak.version>
     <resteasy.version>6.2.4.Final</resteasy.version>
-    <keycloak-events.version>0.23</keycloak-events.version>
-    <keycloak-magic-link.version>0.22</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.47</keycloak-orgs.version>
-    <keycloak-themes.version>0.19</keycloak-themes.version>
+    <keycloak-events.version>0.24</keycloak-events.version>
+    <keycloak-magic-link.version>0.23</keycloak-magic-link.version>
+    <keycloak-orgs.version>0.48</keycloak-orgs.version>
+    <keycloak-themes.version>0.20</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.18</phasetwo-admin-portal.version>
   </properties>
 
@@ -77,6 +77,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!--
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
@@ -110,6 +111,7 @@
         </exclusion>
       </exclusions>
     </dependency>
+    -->
     <dependency>
       <groupId>dnsjava</groupId>
       <artifactId>dnsjava</artifactId>
