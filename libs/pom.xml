@@ -25,7 +25,7 @@
     <keycloak-events.version>0.24</keycloak-events.version>
     <keycloak-magic-link.version>0.23</keycloak-magic-link.version>
     <keycloak-orgs.version>0.48</keycloak-orgs.version>
-    <keycloak-themes.version>0.20</keycloak-themes.version>
+    <keycloak-themes.version>0.21</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.18</phasetwo-admin-portal.version>
   </properties>
 
@@ -56,17 +56,6 @@
       <version>${phasetwo-admin-portal.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.keycloak</groupId>
-      <artifactId>keycloak-admin-client</artifactId>
-      <version>${keycloak.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.wildfly.client</groupId>
       <artifactId>wildfly-client-config</artifactId>
       <version>1.0.1.Final</version>
@@ -77,41 +66,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!--
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-client</artifactId>
-      <version>${resteasy.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-client-api</artifactId>
-      <version>${resteasy.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jackson2-provider</artifactId>
-      <version>${resteasy.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    -->
     <dependency>
       <groupId>dnsjava</groupId>
       <artifactId>dnsjava</artifactId>

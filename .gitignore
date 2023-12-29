@@ -1,3 +1,7 @@
 *~
 */target
 /cluster/lib/*.jar
+.project
+.settings/
+*tmp/
+.quarkus/
