@@ -22,7 +22,7 @@ Also, the distribution contains the `keycloak-admin-client` and the dependencies
 
 ## Differences
 
-This packages a `cache-ispn-jdbc-ping.xml` for setting up Infinispan/JGroups discovery via the `JDBC` ping protocol. To use it, set the environment variable `KC_CACHE_CONFIG_FILE: cache-jdbc-persistent.xml`.
+This packages a `cache-ispn-jdbc-ping.xml` for setting up Infinispan/JGroups discovery via the `JDBC` ping protocol. To use it, set the environment variable `KC_CACHE_CONFIG_FILE: cache-ispn-jdbc-ping.xml`.
 
 Because you may want to use a different driver class, and the url string differs from that of Keycloak, we have added 2 variables:
 ```
