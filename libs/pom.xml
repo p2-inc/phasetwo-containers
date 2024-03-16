@@ -26,6 +26,7 @@
     <keycloak-orgs.version>0.64</keycloak-orgs.version>
     <keycloak-themes.version>0.24</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.26</phasetwo-admin-portal.version>
+    <phasetwo-idp-wizard.version>0.1</phasetwo-idp-wizard.version>
   </properties>
 
   <dependencies>
@@ -53,6 +54,11 @@
       <groupId>io.phasetwo</groupId>
       <artifactId>phasetwo-admin-portal</artifactId>
       <version>${phasetwo-admin-portal.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.phasetwo</groupId>
+      <artifactId>phasetwo-idp-wizard</artifactId>
+      <version>${phasetwo-idp-wizard.version}</version>
     </dependency>
     <dependency>
       <groupId>org.wildfly.client</groupId>
