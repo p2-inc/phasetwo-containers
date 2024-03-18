@@ -18,5 +18,6 @@ FROM quay.io/phasetwo/phasetwo-keycloak:latest
 COPY --from=builder /opt/keycloak/lib/quarkus/ /opt/keycloak/lib/quarkus/
 COPY --from=builder /opt/keycloak/providers/ /opt/keycloak/providers/
 COPY --from=builder /opt/keycloak/conf/cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
+COPY --from=builder /opt/keycloak/bin/p2-entrypoint.sh /opt/keycloak/bin/p2-entrypoint.sh
 
 ENTRYPOINT [ "/opt/keycloak/bin/p2-entrypoint.sh" ]
