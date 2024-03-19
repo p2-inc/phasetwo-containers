@@ -1,4 +1,4 @@
-FROM quay.io/phasetwo/keycloak-crdb:23.0.7 as builder
+FROM quay.io/phasetwo/keycloak-crdb:24.0.0 as builder
 
 ENV KC_METRICS_ENABLED=true
 ENV KC_HEALTH_ENABLED=true
@@ -17,10 +17,9 @@ COPY ./libs/target/container*/*.jar /opt/keycloak/providers/
 
 RUN /opt/keycloak/bin/kc.sh --verbose build --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
 
-FROM quay.io/phasetwo/keycloak-crdb:23.0.7
+FROM quay.io/phasetwo/keycloak-crdb:24.0.0
 
-USER root
-
+#USER root
 # remediation for vulnerabilities
 # no longer works after switch to ubi-micro 
 #RUN microdnf update -y && microdnf clean all && rm -rf /var/cache/yum/* && rm -f /tmp/tls-ca-bundle.pem
@@ -38,5 +37,3 @@ WORKDIR /opt/keycloak
 # this cert shouldn't be used, as it's just to stop the startup from complaining
 RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" -keystore conf/server.keystore
 
-#ENTRYPOINT ["/opt/keycloak/bin/kc.sh", "-v", "start", "--optimized" ]
-#ENTRYPOINT [ "/opt/keycloak/bin/kc.sh" ]
