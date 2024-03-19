@@ -23,7 +23,7 @@
     <keycloak.version>23.0.7</keycloak.version>
     <keycloak-events.version>0.26</keycloak-events.version>
     <keycloak-magic-link.version>0.25</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.64</keycloak-orgs.version>
+    <keycloak-orgs.version>0.65</keycloak-orgs.version>
     <keycloak-themes.version>0.24</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.26</phasetwo-admin-portal.version>
   </properties>
