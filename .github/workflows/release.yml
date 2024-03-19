@@ -83,7 +83,7 @@ jobs:
           ssh-private-key: |
             ${{ secrets.IDP_WIZARD_SSH_KEY }}
       - name: Build with Maven
-        run: cd cluster/ && cp ../conf/cache-ispn-jdbc-ping.xml . && cd ../
+        run: cd cluster/ && cp ../conf/cache-ispn-jdbc-ping.xml . && cp ../conf/p2-entrypoint.sh . && cd ../
       - name: Remove ssh identities
         run: ssh-add -D
       - name: Set up QEMU
