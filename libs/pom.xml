@@ -20,12 +20,13 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <keycloak.version>23.0.7</keycloak.version>
-    <keycloak-events.version>0.26</keycloak-events.version>
-    <keycloak-magic-link.version>0.25</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.65</keycloak-orgs.version>
-    <keycloak-themes.version>0.24</keycloak-themes.version>
-    <phasetwo-admin-portal.version>0.26</phasetwo-admin-portal.version>
+    <keycloak.version>24.0.0</keycloak.version>
+    <keycloak-events.version>0.27</keycloak-events.version>
+    <keycloak-magic-link.version>0.26</keycloak-magic-link.version>
+    <keycloak-orgs.version>0.67</keycloak-orgs.version>
+    <keycloak-themes.version>0.25</keycloak-themes.version>
+    <phasetwo-admin-portal.version>0.27</phasetwo-admin-portal.version>
+    <phasetwo-idp-wizard.version>0.1</phasetwo-idp-wizard.version>
   </properties>
 
   <dependencies>
@@ -53,6 +54,11 @@
       <groupId>io.phasetwo</groupId>
       <artifactId>phasetwo-admin-portal</artifactId>
       <version>${phasetwo-admin-portal.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.phasetwo</groupId>
+      <artifactId>phasetwo-idp-wizard</artifactId>
+      <version>${phasetwo-idp-wizard.version}</version>
     </dependency>
     <dependency>
       <groupId>org.wildfly.client</groupId>
