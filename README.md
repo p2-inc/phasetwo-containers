@@ -2,7 +2,7 @@
 
 # Phase Two Keycloak image
 
-Contains the base Phase Two Keycloak image that is used in the self-serve clusters (both for shared and dedicated). This is based on the a Keycloak image which differs from the mainline only in that it supports [Keycloak on CockroachDB](https://quay.io/repository/phasetwo/keycloak-crdb?tab=info) for the legacy store type.
+Contains the base Phase Two Keycloak image that is used in the self-serve clusters (both for shared and dedicated). This is based on the a Keycloak image which differs from the mainline with added support for [Keycloak on CockroachDB](https://quay.io/repository/phasetwo/keycloak-crdb?tab=info).
 
 ## Extensions
 
