@@ -1,3 +1,5 @@
+> :warning: This is no longer functional given that the keycloak-orgs extension now requires a custom build of keycloak to import the `keycloak-admin-client` libraries. See https://github.com/p2-inc/keycloak-orgs?tab=readme-ov-file#installation
+
 # Installing the Phase Two library in an unpacked Keycloak (aka "bare metal installations")
 
 This README covers how to deploy a Keycloak instance on bare metal
