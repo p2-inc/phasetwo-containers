@@ -81,7 +81,3 @@ docker-compose -f examples/cockroach/crdb-keycloak.yml up
 ## Releases
 
 https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags
-
-## User-contributed docs
-
-- [Installing in an unpacked Keycloak, using without docker](docs/manual-install.md) from @cato447
