@@ -1,8 +1,8 @@
-> :rocket: **Try it for free** in the new Phase Two [keycloak managed service](https://phasetwo.io/dashboard/?utm_source=github&utm_medium=readme&utm_campaign=phasetwo-containers). See the [announcement and demo video](https://phasetwo.io/blog/self-service/) for more information.
+> :rocket: **Try it for free** in the new Phase Two [keycloak managed service](https://phasetwo.io/?utm_source=github&utm_medium=readme&utm_campaign=phasetwo-containers). Go to [Phase Two](https://phasetwo.io/) for more information.
 
-# Phase Two Keycloak image
+# Phase Two Keycloak Docker image
 
-Contains the base Phase Two Keycloak image that is used in the self-serve clusters (both for shared and dedicated). This is based on the a Keycloak image which differs from the mainline with added support for [Keycloak on CockroachDB](https://quay.io/repository/phasetwo/keycloak-crdb?tab=info).
+Builds the base Phase Two Keycloak Docker image that is used in the self-serve clusters (both for shared and dedicated). This is based on the a Keycloak image which differs from the mainline with added support for [Keycloak on CockroachDB](https://quay.io/repository/phasetwo/keycloak-crdb?tab=info).
 
 ## Extensions
 
@@ -31,15 +31,17 @@ KC_ISPN_DB_VENDOR   # default is 'postgresql'
 
 ## Versioning
 
-Format for version is `<keycloak-version>-<build-timestamp>` e.g. `21.1.2.1688664025`.
+Format for version is `<keycloak-version>-<build-timestamp>` e.g. `24.0.4.1688664025`.
 
 There will also be major/minor/patch version tags released. E.g.
-- `21`
-- `21.1`
-- `21.1.2`
-- `21.1.2.1688664025`
+- `24`
+- `24.0`
+- `24.0.4`
+- `24.0.4.1688664025`
 
 ## Building
+
+This project uses a maven project in `libs/` to fetch all of the jars that will be included in the Docker image.
 
 ```
 # build the libs project
@@ -54,6 +56,13 @@ docker build -t quay.io/phasetwo/phasetwo-keycloak:$VERSION -f Dockerfile .
 
 ```
 docker push quay.io/phasetwo/phasetwo-keycloak:$VERSION
+```
+
+Check to see if there are updated jars:
+
+```
+cd libs/
+mvn versions:display-dependency-updates
 ```
 
 ## Testing
