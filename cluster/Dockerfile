@@ -1,8 +1,9 @@
 FROM quay.io/phasetwo/phasetwo-keycloak:latest as builder
 
+ENV KC_DB=cockroach
 ENV KC_METRICS_ENABLED=true
 ENV KC_HEALTH_ENABLED=true
-ENV KC_FEATURES=preview,admin2
+ENV KC_FEATURES=persistent-user-sessions,admin-fine-grained-authz,client-secret-rotation,dpop,passkeys,recovery-codes,scripts,token-exchange,update-email
 ENV KC_HTTP_RELATIVE_PATH=/auth
 ENV KC_CACHE_CONFIG_FILE=cache-ispn-jdbc-ping.xml
 
