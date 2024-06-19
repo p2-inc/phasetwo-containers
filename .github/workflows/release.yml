@@ -6,10 +6,10 @@ on:
       - main
 
 env:
-  # Version 24.0.5
-  VERSION_MAJOR: 24
+  # Version 25.0.0
+  VERSION_MAJOR: 25
   VERSION_SUBMAJOR: 0
-  VERSION_MINOR: 5
+  VERSION_MINOR: 0
 
 jobs:
   release-public:
@@ -17,10 +17,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: "17"
+          java-version: "21"
           distribution: adopt
       - name: Build with Maven
         run: cd libs/ && mvn -U --batch-mode package && cd ../
@@ -54,55 +54,9 @@ jobs:
             quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}
             quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}
             quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}.${{ env.VERSION_TS }}
-      - name: Tag
-        uses: cardinalby/git-tag-action@master
-        env:
-          TAG: v${{ env.VERSION_TAG }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  release-cluster:
-    needs: release-public
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Version
-        run: |
-          TS=$(date +%s)
-          echo "VERSION_MAJOR=$VERSION_MAJOR" >> $GITHUB_ENV
-          echo "VERSION_SUBMAJOR=$VERSION_SUBMAJOR" >> $GITHUB_ENV
-          echo "VERSION_MINOR=$VERSION_MINOR" >> $GITHUB_ENV
-          echo "VERSION_TS=$TS" >> $GITHUB_ENV
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: "17"
-          distribution: adopt
-      - name: Set ssh keys
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: |
-            ${{ secrets.IDP_WIZARD_SSH_KEY }}
-      - name: Build with Maven
+      - name: Move files for cluster distribution
         run: cd cluster/ && cp ../conf/cache-ispn-jdbc-ping.xml . && cp ../conf/p2-entrypoint.sh . && cd ../
-      - name: Remove ssh identities
-        run: ssh-add -D
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Login to Quay.io
-        uses: docker/login-action@v2
-        with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
-      - name: Login to ECR
-        uses: jwalton/gh-ecr-login@v2.0.4
-        with:
-          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          region: ${{ vars.AWS_ECR_REGION }}
-      - name: Build and push to quay
+      - name: Build cluster distribution and push to quay
         uses: docker/build-push-action@v4
         with:
           context: "cluster/"
@@ -116,8 +70,8 @@ jobs:
             quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}
             quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}
             quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}.${{ env.VERSION_TS }}
-            ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:latest
-            ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:${{ env.VERSION_MAJOR }}
-            ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}
-            ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}
-            ${{ vars.AWS_ECR_REGISTRY }}/phasetwo-cluster:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}.${{ env.VERSION_TS }}
+      - name: Tag
+        uses: cardinalby/git-tag-action@master
+        env:
+          TAG: v${{ env.VERSION_TAG }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

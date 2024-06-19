@@ -37,10 +37,13 @@ services:
       KC_LOG_LEVEL: "INFO,io.phasetwo:DEBUG"
       KC_TRANSACTION_XA_ENABLED: 'false'
       KC_TRANSACTION_JTA_ENABLED: 'false'
-      KC_FEATURES: preview,admin2
+      KC_FEATURES: persistent-user-sessions
       KC_METRICS_ENABLED: true
       KC_HEALTH_ENABLED: true
+      #KC_LEGACY_OBSERVABILITY_INTERFACE: true
+      KC_HTTP_MANAGEMENT_PORT: 9000
     ports:
+      - 9000:9000
       - 8080:8080
       - 8443:8443
     depends_on:
