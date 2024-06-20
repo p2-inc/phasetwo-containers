@@ -25,6 +25,7 @@ services:
       KEYCLOAK_PASSWORD: password
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: password
+      KC_DB: postgres
       KC_DB_URL_HOST: postgres
       KC_DB_URL_DATABASE: keycloak
       KC_DB_SCHEMA: public
@@ -35,7 +36,7 @@ services:
       KC_PROXY: 'edge'
       KC_LOG_LEVEL: INFO
     entrypoint: ["/opt/keycloak/bin/kc.sh", "start", "--spi-email-template-provider=freemarker-plus-mustache", "--spi-email-template-freemarker-plus-mustache-enabled=true", "--spi-theme-cache-themes=false"]
-￼   ports:
+    ports:
       - 8080:8080
       - 8443:8443
     depends_on:
