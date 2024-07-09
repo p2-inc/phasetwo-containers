@@ -23,10 +23,10 @@
     <keycloak.version>25.0.1</keycloak.version>
     <keycloak-events.version>0.30</keycloak-events.version>
     <keycloak-magic-link.version>0.27</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.76</keycloak-orgs.version>
+    <keycloak-orgs.version>0.77</keycloak-orgs.version>
     <keycloak-themes.version>0.30</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.32</phasetwo-admin-portal.version>
-    <phasetwo-idp-wizard.version>0.8</phasetwo-idp-wizard.version>
+    <phasetwo-idp-wizard.version>0.9</phasetwo-idp-wizard.version>
   </properties>
 
   <dependencies>
