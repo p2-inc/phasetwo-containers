@@ -26,7 +26,7 @@
     <keycloak-orgs.version>0.77</keycloak-orgs.version>
     <keycloak-themes.version>0.30</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.32</phasetwo-admin-portal.version>
-    <phasetwo-idp-wizard.version>0.11</phasetwo-idp-wizard.version>
+    <phasetwo-idp-wizard.version>0.12</phasetwo-idp-wizard.version>
   </properties>
 
   <dependencies>
