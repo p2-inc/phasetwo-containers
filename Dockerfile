@@ -1,4 +1,4 @@
-FROM quay.io/phasetwo/keycloak-crdb:25.0.1 as builder
+FROM quay.io/phasetwo/keycloak-crdb:25.0.2 as builder
 
 ENV KC_METRICS_ENABLED=true
 ENV KC_HEALTH_ENABLED=true
@@ -17,7 +17,7 @@ COPY ./libs/target/container*/*.jar /opt/keycloak/providers/
 
 RUN /opt/keycloak/bin/kc.sh --verbose build --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
 
-FROM quay.io/phasetwo/keycloak-crdb:25.0.1
+FROM quay.io/phasetwo/keycloak-crdb:25.0.2
 
 #USER root
 # remediation for vulnerabilities
@@ -35,5 +35,5 @@ COPY --from=builder /opt/keycloak/conf/cache-ispn-jdbc-ping.xml /opt/keycloak/co
 
 WORKDIR /opt/keycloak
 # this cert shouldn't be used, as it's just to stop the startup from complaining
-RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" -keystore conf/server.keystore
+# RUN keytool -genkeypair -storepass password -storetype PKCS12 -keyalg RSA -keysize 2048 -dname "CN=server" -alias server -ext "SAN:c=DNS:localhost,IP:127.0.0.1" -keystore conf/server.keystore
 
