@@ -20,10 +20,10 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <keycloak.version>25.0.2</keycloak.version>
-    <keycloak-events.version>0.30</keycloak-events.version>
-    <keycloak-magic-link.version>0.27</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.77</keycloak-orgs.version>
+    <keycloak.version>25.0.4</keycloak.version>
+    <keycloak-events.version>0.31</keycloak-events.version>
+    <keycloak-magic-link.version>0.28</keycloak-magic-link.version>
+    <keycloak-orgs.version>0.78</keycloak-orgs.version>
     <keycloak-themes.version>0.30</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.32</phasetwo-admin-portal.version>
     <phasetwo-idp-wizard.version>0.12</phasetwo-idp-wizard.version>
@@ -74,7 +74,7 @@
     <dependency>
       <groupId>dnsjava</groupId>
       <artifactId>dnsjava</artifactId>
-      <version>3.5.3</version>
+      <version>3.6.1</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
