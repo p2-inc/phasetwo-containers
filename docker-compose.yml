@@ -24,6 +24,7 @@ services:
       KEYCLOAK_PASSWORD: admin
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_ISPN_DB_VENDOR: cockroachdb
       KC_DB_URL_HOST: cockroach
       KC_DB_URL_PORT: 26257
       KC_DB_URL_DATABASE: defaultdb
@@ -40,7 +41,7 @@ services:
       KC_FEATURES: persistent-user-sessions
       KC_METRICS_ENABLED: true
       KC_HEALTH_ENABLED: true
-      #KC_LEGACY_OBSERVABILITY_INTERFACE: true
+      KC_LEGACY_OBSERVABILITY_INTERFACE: true
       KC_HTTP_MANAGEMENT_PORT: 9000
     ports:
       - 9000:9000
