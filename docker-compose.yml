@@ -30,7 +30,7 @@ services:
       KC_DB_SCHEMA: public
       KC_DB_USERNAME: root
       KC_DB_PASSWORD: ''
-      KC_DB_URL_PROPERTIES: '?'
+      KC_DB_URL_PROPERTIES: '?sslmode=disable&useCockroachMetadata=true'
       KC_HOSTNAME_STRICT: 'false'
       KC_HTTP_ENABLED: 'true'
       KC_PROXY: 'edge'
@@ -52,7 +52,7 @@ services:
   caddy:
     image: caddy:2.4.6-alpine
     restart: unless-stopped
-    command: caddy reverse-proxy --from https://s01.villamiramar.fr:443 --to http://keycloak:8080
+    command: caddy reverse-proxy --from https://localhost:443 --to http://keycloak:8080
     ports:
       - 80:80
       - 443:443

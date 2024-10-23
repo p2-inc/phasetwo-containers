@@ -48,14 +48,15 @@ This project uses a maven project in `libs/` to fetch all of the jars that will 
 cd libs/
 mvn package
 cd ..
-# build the image
+# build the image for local testing
 docker build -t quay.io/phasetwo/phasetwo-keycloak:$VERSION -f Dockerfile .
 ```
 
 ## Distribution
 
 ```
-docker push quay.io/phasetwo/phasetwo-keycloak:$VERSION
+# build and push for both platforms
+docker buildx build --platform linux/amd64,linux/arm64 --tag quay.io/phasetwo/phasetwo-keycloak:latest --tag quay.io/phasetwo/phasetwo-keycloak:$VERSION --push .
 ```
 
 Check to see if there are updated jars:
