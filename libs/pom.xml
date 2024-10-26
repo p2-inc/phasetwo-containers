@@ -20,7 +20,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <keycloak.version>26.0.0</keycloak.version>
+    <keycloak.version>26.0.2</keycloak.version>
     <keycloak-events.version>0.33-SNAPSHOT</keycloak-events.version>
     <keycloak-magic-link.version>0.29</keycloak-magic-link.version>
     <keycloak-orgs.version>0.79-SNAPSHOT</keycloak-orgs.version>
