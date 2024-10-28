@@ -21,6 +21,8 @@ This distribution contains the following extensions:
 
 ## Differences
 
+### Cache
+
 This packages a `cache-ispn-jdbc-ping.xml` for setting up Infinispan/JGroups discovery via the `JDBC` ping protocol. To use it, set the environment variable `KC_CACHE_CONFIG_FILE: cache-ispn-jdbc-ping.xml`.
 
 Because you may want to use a different driver class, and the url string differs from that of Keycloak, we have added 2 variables:
@@ -29,15 +31,22 @@ KC_ISPN_DB_DRIVER   # default is 'org.postgresql.Driver'
 KC_ISPN_DB_VENDOR   # default is 'postgresql'
 ```
 
+### CockroachDB
+
+If you are using CockroachDB, for **Keycloak 26** there are changes:
+- There is now a wrapper JDBC driver that is placed in the `/opt/keycloak/providers/` directory. If you are building a custom image based on this one, it must be copied to the target image.
+- If you are using the `KC_DB_URL`, it now has the format `jdbc:cockroachdb://...` rather than `postgres`. This will also be important to configure if you're using JGroups JDBC_PING.
+- You **must** use the `useCockroachMetadata=true` property in your `KC_DB_URL_PROPERTIES`
+
 ## Versioning
 
 Format for version is `<keycloak-version>-<build-timestamp>` e.g. `24.0.4.1688664025`.
 
 There will also be major/minor/patch version tags released. E.g.
-- `24`
-- `24.0`
-- `24.0.4`
-- `24.0.4.1688664025`
+- `26`
+- `26.0`
+- `26.0.2`
+- `26.0.2.1688664025`
 
 ## Building
 
