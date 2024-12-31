@@ -50,6 +50,7 @@
       <artifactId>keycloak-themes</artifactId>
       <version>${keycloak-themes.version}</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>io.phasetwo</groupId>
       <artifactId>phasetwo-admin-portal</artifactId>
@@ -59,7 +60,8 @@
       <groupId>io.phasetwo</groupId>
       <artifactId>phasetwo-idp-wizard</artifactId>
       <version>${phasetwo-idp-wizard.version}</version>
-    </dependency>
+      </dependency>
+    -->
     <dependency>
       <groupId>org.wildfly.client</groupId>
       <artifactId>wildfly-client-config</artifactId>
