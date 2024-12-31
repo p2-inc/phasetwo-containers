@@ -1,4 +1,4 @@
-FROM quay.io/phasetwo/phasetwo-keycloak:latest as builder
+FROM quay.io/phasetwo/phasetwo-keycloak:25.0.6.1735663271 as builder
 
 ENV KC_DB=cockroach
 ENV KC_METRICS_ENABLED=true
@@ -14,7 +14,7 @@ COPY p2-entrypoint.sh /opt/keycloak/bin/p2-entrypoint.sh
 
 RUN /opt/keycloak/bin/kc.sh build --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
 
-FROM quay.io/phasetwo/phasetwo-keycloak:latest
+FROM quay.io/phasetwo/phasetwo-keycloak:25.0.6.1735663271
 
 COPY --from=builder /opt/keycloak/lib/quarkus/ /opt/keycloak/lib/quarkus/
 COPY --from=builder /opt/keycloak/providers/ /opt/keycloak/providers/
