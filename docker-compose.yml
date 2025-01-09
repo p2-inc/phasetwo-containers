@@ -40,7 +40,7 @@ services:
       KC_ISPN_DB_VENDOR: cockroachdb
       KC_LOG_LEVEL: "INFO,io.phasetwo:DEBUG"
       KC_METRICS_ENABLED: true
-      KC_PROXY: 'edge'
+      KC_PROXY_HEADERS: 'edge'
       KC_TRANSACTION_JTA_ENABLED: 'false'
       KC_TRANSACTION_XA_ENABLED: 'false'
     ports:
