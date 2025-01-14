@@ -20,10 +20,8 @@ services:
       KC_DB: cockroach
       KC_HTTP_RELATIVE_PATH: /auth
       PROXY_ADDRESS_FORWARDING: 'true'
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
       KC_CACHE_CONFIG_FILE: cache-ispn-jdbc-ping.xml
       KC_DB_PASSWORD: ''
       KC_DB_SCHEMA: public
@@ -40,7 +38,7 @@ services:
       KC_ISPN_DB_VENDOR: cockroachdb
       KC_LOG_LEVEL: "INFO,io.phasetwo:DEBUG"
       KC_METRICS_ENABLED: true
-      KC_PROXY_HEADERS: 'edge'
+      KC_PROXY_HEADERS: 'xforwarded'
       KC_TRANSACTION_JTA_ENABLED: 'false'
       KC_TRANSACTION_XA_ENABLED: 'false'
     ports:
