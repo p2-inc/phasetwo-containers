@@ -54,8 +54,6 @@ jobs:
             quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}
             quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}
             quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_MAJOR }}.${{ env.VERSION_SUBMAJOR }}.${{ env.VERSION_MINOR }}.${{ env.VERSION_TS }}
-      - name: Move files for cluster distribution
-        run: cd cluster/ && cp ../conf/cache-ispn-jdbc-ping.xml . && cp ../conf/p2-entrypoint.sh . && cd ../
       - name: Build cluster distribution and push to quay
         uses: docker/build-push-action@v4
         with:
