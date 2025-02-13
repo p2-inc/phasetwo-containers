@@ -21,7 +21,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <keycloak.version>26.1.2</keycloak.version>
-    <keycloak-events.version>0.42</keycloak-events.version>
+    <keycloak-events.version>0.43</keycloak-events.version>
     <keycloak-magic-link.version>0.34</keycloak-magic-link.version>
     <keycloak-orgs.version>0.89</keycloak-orgs.version>
     <keycloak-themes.version>0.38</keycloak-themes.version>
