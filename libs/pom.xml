@@ -20,10 +20,10 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <keycloak.version>26.1.2</keycloak.version>
-    <keycloak-events.version>0.44</keycloak-events.version>
-    <keycloak-magic-link.version>0.34</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.89</keycloak-orgs.version>
+    <keycloak.version>26.1.3</keycloak.version>
+    <keycloak-events.version>0.45</keycloak-events.version>
+    <keycloak-magic-link.version>0.36</keycloak-magic-link.version>
+    <keycloak-orgs.version>0.91</keycloak-orgs.version>
     <keycloak-themes.version>0.38</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.35</phasetwo-admin-portal.version>
     <phasetwo-idp-wizard.version>0.18</phasetwo-idp-wizard.version>
