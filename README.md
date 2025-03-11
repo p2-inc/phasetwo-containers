@@ -100,3 +100,7 @@ docker-compose -f examples/cockroach/crdb-keycloak.yml up
 ## Releases
 
 https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags
+
+## Stats collection
+
+This image collects anonymous usage statistics by default via a single HTTP request on startup. This includes version/commit/timestamp and number of realms/clients/orgs/users/idps. In order to block this, set the env var `PHASETWO_ANALYTICS_DISABLED=false`.
