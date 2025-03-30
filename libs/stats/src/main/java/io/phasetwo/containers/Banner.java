@@ -4,20 +4,33 @@ public final class Banner {
 
   private static String BANNER;
 
+  private static final String BLUE = "\u001B[34m";
+  private static final String RESET = "\u001B[0m";
+  private static final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
+
+  private static StringBuilder append(StringBuilder o, String line, String color) {
+    if (!isWindows) {
+      o.append(color).append(line).append(RESET).append("\n");
+    } else {
+      o.append(line).append("\n");
+    }
+    return o;
+  }
+    
   static {
     String abled =
         Stats.statsEnabled()
             ? "Anonymous usage statistics collection is enabled.            "
             : "Anonymous usage statistics collection is disabled.           ";
     StringBuilder o = new StringBuilder();
-    o.append("         dP                                       d8'    d8' ").append("\n");
-    o.append("         88                                      d8'    d8'  ").append("\n");
-    o.append("88d888b. 88d888b. .d8888b. .d8888b. .d8888b.    d8'    d8'   ").append("\n");
-    o.append("88'  `88 88'  `88 88'  `88 Y8ooooo. 88ooood8   d8'    d8'    ").append("\n");
-    o.append("88.  .88 88    88 88.  .88       88 88.  ...  d8'    d8'     ").append("\n");
-    o.append("88Y888P' dP    dP `88888P8 `88888P' `88888P' 88     88       ").append("\n");
-    o.append("88                                                           ").append("\n");
-    o.append("dP                                        https://phasetwo.io").append("\n");
+    append(o, "██████╗ ██╗  ██╗ █████╗ ███████╗███████╗    ██╗ ██╗", BLUE);
+    append(o, "██╔══██╗██║  ██║██╔══██╗██╔════╝██╔════╝   ██╔╝██╔╝", BLUE);
+    append(o, "██████╔╝███████║███████║███████╗█████╗    ██╔╝██╔╝ ", BLUE);
+    append(o, "██╔═══╝ ██╔══██║██╔══██║╚════██║██╔══╝   ██╔╝██╔╝  ", BLUE);
+    append(o, "██║     ██║  ██║██║  ██║███████║███████╗██╔╝██╔╝   ", BLUE);
+    append(o, "╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝ ╚═╝    ", BLUE);
+    o.append("                                                             ").append("\n");
+    o.append("   https://phasetwo.io                                       ").append("\n");
     o.append("                                                             ").append("\n");
     o.append("You are using the **Phase Two** build of Keycloak from       ").append("\n");
     o.append("   https://quay.io/repository/phasetwo/phasetwo-keycloak     ").append("\n");

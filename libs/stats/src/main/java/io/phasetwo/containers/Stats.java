@@ -15,8 +15,7 @@ import org.apache.http.impl.client.HttpClients;
 public final class Stats {
 
   public static final String PHASETWO_ANALYTICS_DISABLED_KEY = "PHASETWO_ANALYTICS_DISABLED";
-  public static final String PHASETWO_ANALYTICS_URL =
-      "https://www.postb.in/1741721302910-2969262909609";
+  public static final String PHASETWO_ANALYTICS_URL = "https://stats.authit.dev/collect";
 
   public static boolean statsEnabled() {
     String disabled = System.getenv(PHASETWO_ANALYTICS_DISABLED_KEY);

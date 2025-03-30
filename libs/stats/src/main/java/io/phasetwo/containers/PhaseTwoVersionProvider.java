@@ -77,7 +77,7 @@ public class PhaseTwoVersionProvider
                         s.getContext().setRealm(r);
                         clients.getAndAdd(s.clients().getClientsCount(r));
                         idps.getAndAdd(s.identityProviders().count());
-                        orgs.getAndAdd(o.getOrganizationsCount(r, null));
+                        orgs.getAndAdd(o.getOrganizationsCount(r, null, null));
                         users.getAndAdd(s.users().getUsersCount(r));
                       });
               info.add("num_clients", clients.get());
@@ -89,9 +89,6 @@ public class PhaseTwoVersionProvider
               e.printStackTrace();
             }
           });
-
-      //      Stats.collect(Version.getVendor(), org.keycloak.common.Version.VERSION,
-      // Version.getCommit());
       Stats.collect(info);
     } catch (Exception e) {
     }
