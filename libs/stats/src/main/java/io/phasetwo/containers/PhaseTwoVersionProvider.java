@@ -80,14 +80,14 @@ public class PhaseTwoVersionProvider
                         orgs.getAndAdd(o.getOrganizationsCount(r, null, null));
                         users.getAndAdd(s.users().getUsersCount(r));
                       });
-              info.add("num_clients", clients.get());
-              info.add("num_idps", idps.get());
-              info.add("num_orgs", orgs.get());
-              info.add("num_realms", realms.get());
-              info.add("num_users", users.get());
             } catch (Exception e) {
               e.printStackTrace();
             }
+            info.add("num_clients", clients.get());
+            info.add("num_idps", idps.get());
+            info.add("num_orgs", orgs.get());
+            info.add("num_realms", realms.get());
+            info.add("num_users", users.get());
           });
       Stats.collect(info);
     } catch (Exception e) {
