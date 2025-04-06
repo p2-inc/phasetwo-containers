@@ -1,4 +1,4 @@
-package io.phasetwo.containers;
+package io.phasetwo.containers.stats;
 
 import org.keycloak.provider.ProviderFactory;
 

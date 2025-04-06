@@ -38,6 +38,9 @@
     <keycloak-themes.version>0.39</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.35</phasetwo-admin-portal.version>
     <phasetwo-idp-wizard.version>0.19</phasetwo-idp-wizard.version>
+    <auto-service.version>1.1.1</auto-service.version>
+    <guava.version>33.0.0-jre</guava.version>
+    <lombok.version>1.18.36</lombok.version>
   </properties>
 
   <build>
@@ -49,7 +52,7 @@
   </dependencies>
 
   <modules>
-    <module>stats</module>
+    <module>internal</module>
     <module>bundle</module>
   </modules>
     

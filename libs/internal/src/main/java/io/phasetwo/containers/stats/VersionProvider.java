@@ -1,4 +1,4 @@
-package io.phasetwo.containers;
+package io.phasetwo.containers.stats;
 
 import java.util.Map;
 import org.keycloak.provider.Provider;

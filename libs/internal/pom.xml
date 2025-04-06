@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.phasetwo.container</groupId>
-  <artifactId>stats</artifactId>
+  <artifactId>internal</artifactId>
   <packaging>jar</packaging>
   <version>0.1-SNAPSHOT</version>
 
@@ -34,7 +34,12 @@
             <path>
               <groupId>com.google.auto.service</groupId>
               <artifactId>auto-service</artifactId>
-              <version>1.1.1</version>
+              <version>${auto-service.version}</version>
+            </path>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
             </path>
           </annotationProcessorPaths>
         </configuration>
@@ -86,16 +91,24 @@
   </build>
 
   <dependencies>
+    <!-- annotation processing helpers for logging and services -->
     <dependency>
-      <groupId>io.phasetwo.keycloak</groupId>
-      <artifactId>keycloak-orgs</artifactId>
-      <version>${keycloak-orgs.version}</version>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.auto.service</groupId>
       <artifactId>auto-service</artifactId>
-      <version>1.1.1</version>
+      <version>${auto-service.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.phasetwo.keycloak</groupId>
+      <artifactId>keycloak-orgs</artifactId>
+      <version>${keycloak-orgs.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -138,6 +151,12 @@
       <groupId>jakarta.ws.rs</groupId>
       <artifactId>jakarta.ws.rs-api</artifactId>
       <version>3.1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-reactive</artifactId>
+      <version>3.15.3.1</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
