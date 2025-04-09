@@ -1,4 +1,4 @@
-package io.phasetwo.containers;
+package io.phasetwo.containers.stats;
 
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;

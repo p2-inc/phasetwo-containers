@@ -1,4 +1,4 @@
-package io.phasetwo.containers;
+package io.phasetwo.containers.stats;
 
 import com.google.auto.service.AutoService;
 import org.keycloak.provider.Provider;

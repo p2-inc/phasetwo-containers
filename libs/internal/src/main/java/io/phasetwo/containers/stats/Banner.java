@@ -1,4 +1,6 @@
-package io.phasetwo.containers;
+package io.phasetwo.containers.stats;
+
+import io.phasetwo.containers.Version;
 
 public final class Banner {
 
@@ -6,7 +8,8 @@ public final class Banner {
 
   private static final String BLUE = "\u001B[34m";
   private static final String RESET = "\u001B[0m";
-  private static final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
+  private static final boolean isWindows =
+      System.getProperty("os.name").toLowerCase().contains("win");
 
   private static StringBuilder append(StringBuilder o, String line, String color) {
     if (!isWindows) {
@@ -16,7 +19,7 @@ public final class Banner {
     }
     return o;
   }
-    
+
   static {
     String abled =
         Stats.statsEnabled()

@@ -1,7 +1,8 @@
-package io.phasetwo.containers;
+package io.phasetwo.containers.stats;
 
 import com.google.auto.service.AutoService;
 import com.google.common.collect.Maps;
+import io.phasetwo.containers.Version;
 import io.phasetwo.service.model.OrganizationProvider;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;

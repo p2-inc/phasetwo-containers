@@ -28,7 +28,7 @@
   <dependencies>
     <dependency>
       <groupId>io.phasetwo.container</groupId>
-      <artifactId>stats</artifactId>
+      <artifactId>internal</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
