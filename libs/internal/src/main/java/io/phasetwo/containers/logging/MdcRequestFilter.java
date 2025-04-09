@@ -18,6 +18,9 @@ public class MdcRequestFilter implements ContainerRequestFilter {
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
     KeycloakSession session = KeycloakSessionUtil.getKeycloakSession();
+    log.tracef(
+        "Request %s %s has session %s",
+        requestContext.getMethod(), requestContext.getUriInfo().getPath(), session);
     if (session != null
         && session.getContext() != null
         && session.getContext().getRealm() != null) {
