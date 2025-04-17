@@ -8,7 +8,7 @@ volumes:
 
 services:
   cockroach:
-    image: cockroachdb/cockroach:latest
+    image: cockroachdb/cockroach:v23.2.23
     volumes:
       - cockroach_data:/cockroach/cockroach-data
     command: start-single-node --insecure
