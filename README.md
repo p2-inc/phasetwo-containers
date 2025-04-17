@@ -1,4 +1,4 @@
-> :rocket: **Try it for free** in the new Phase Two [keycloak managed service](https://phasetwo.io/?utm_source=github&utm_medium=readme&utm_campaign=phasetwo-containers). Go to [Phase Two](https://phasetwo.io/) for more information.
+> :rocket: **Try it for free** in the Phase Two [keycloak managed service](https://phasetwo.io/?utm_source=github&utm_medium=readme&utm_campaign=phasetwo-containers). Go to [Phase Two](https://phasetwo.io/) for more information.
 
 # Phase Two Keycloak Docker image
 
@@ -11,7 +11,7 @@ This distribution contains the following extensions:
 | Component | Status | Repository | Description |
 | --- | --- | --- | --- |
 | Admin Portal | :white_check_mark: | https://github.com/p2-inc/phasetwo-admin-portal | User self-management for their account and organizations. |
-| Admin UI | :white_check_mark: | https://github.com/p2-inc/keycloak-ui | Admin UI customizations. |
+| Admin UI | :white_check_mark: | https://github.com/p2-inc/keycloak | Admin UI customizations. |
 | Events | :white_check_mark: | https://github.com/p2-inc/keycloak-events | All event listener implementations. |
 | IdP Wizards | :white_check_mark: | https://github.com/p2-inc/idp-wizard | Identity Provider setup wizards for self-management of SSO admins and organizations. |
 | Magic Link | :white_check_mark: | https://github.com/p2-inc/keycloak-magic-link | Magic Link Authentication. Created with an Authenticator or Resource. |
@@ -55,7 +55,7 @@ This project uses a maven project in `libs/` to fetch all of the jars that will 
 ```
 # build the libs project
 cd libs/
-mvn package
+mvn clean package
 cd ..
 # build the image for local testing
 docker build -t quay.io/phasetwo/phasetwo-keycloak:$VERSION -f Dockerfile .
@@ -86,17 +86,6 @@ docker run --name phasetwo_test --rm -p 8080:8080 \
     start-dev --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
 ```
 
-There are docker compose examples for Postgres and Cockroach in the `examples/` directory. E.g.:
-
-```
-docker rmi -f phasetwo/phasetwo-keycloak-crdb:latest
-docker build -t phasetwo/phasetwo-keycloak-crdb:latest -f examples/cockroach/Dockerfile .
-# If you need to inspect the image contents, use:
-docker run -it --rm  --entrypoint /bin/bash phasetwo/phasetwo-keycloak-crdb:latest
-# Run it with a single-node crdb instance and caddy as a reverse proxy
-docker-compose -f examples/cockroach/crdb-keycloak.yml up
-```
-
 ## Releases
 
 https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags
@@ -104,3 +93,7 @@ https://quay.io/repository/phasetwo/phasetwo-keycloak?tab=tags
 ## Stats collection
 
 This image collects anonymous usage statistics by default via a single HTTP request on startup. This includes version/commit/timestamp and number of realms/clients/orgs/users/idps. In order to block this, set the env var `PHASETWO_ANALYTICS_DISABLED=true`.
+
+---
+
+All documentation, source code and other files in this repository are Copyright 2025 Phase Two, Inc.
