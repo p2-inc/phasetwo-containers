@@ -36,7 +36,7 @@
     <keycloak-magic-link.version>0.40</keycloak-magic-link.version>
     <keycloak-orgs.version>0.98</keycloak-orgs.version>
     <keycloak-themes.version>0.40</keycloak-themes.version>
-    <phasetwo-admin-portal.version>0.36</phasetwo-admin-portal.version>
+    <phasetwo-admin-portal.version>0.37</phasetwo-admin-portal.version>
     <phasetwo-idp-wizard.version>0.22</phasetwo-idp-wizard.version>
     <auto-service.version>1.1.1</auto-service.version>
     <guava.version>33.0.0-jre</guava.version>
