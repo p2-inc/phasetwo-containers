@@ -31,10 +31,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>21</java.version>
     <main.java.package>io.phasetwo.containers</main.java.package>
-    <keycloak.version>26.2.2</keycloak.version>
+    <keycloak.version>26.2.4</keycloak.version>
     <keycloak-events.version>0.46</keycloak-events.version>
-    <keycloak-magic-link.version>0.40</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.99</keycloak-orgs.version>
+    <keycloak-magic-link.version>0.41</keycloak-magic-link.version>
+    <keycloak-orgs.version>0.103</keycloak-orgs.version>
     <keycloak-themes.version>0.43</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.37</phasetwo-admin-portal.version>
     <phasetwo-idp-wizard.version>0.23</phasetwo-idp-wizard.version>
