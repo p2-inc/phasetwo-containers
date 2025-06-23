@@ -6,3 +6,4 @@
 *tmp/
 .quarkus/
 target
+.DS_Store
