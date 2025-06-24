@@ -8,16 +8,17 @@ Builds the base Phase Two Keycloak Docker image that is used in the self-serve c
 
 This distribution contains the following extensions:
 
-| Component      | Status             | Repository                                        | Description                                                                               |
-| -------------- | ------------------ | ------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| Admin Portal   | :white_check_mark: | https://github.com/p2-inc/phasetwo-admin-portal   | User self-management for their account and organizations.                                 |
-| Admin UI       | :white_check_mark: | https://github.com/p2-inc/keycloak                | Admin UI customizations.                                                                  |
-| Events         | :white_check_mark: | https://github.com/p2-inc/keycloak-events         | All event listener implementations.                                                       |
-| IdP Wizards    | :white_check_mark: | https://github.com/p2-inc/idp-wizard              | Identity Provider setup wizards for self-management of SSO admins and organizations.      |
-| Magic Link     | :white_check_mark: | https://github.com/p2-inc/keycloak-magic-link     | Magic Link Authentication. Created with an Authenticator or Resource.                     |
-| Organizations  | :white_check_mark: | https://github.com/p2-inc/keycloak-orgs           | Organizations multi-tenant entities, resources and APIs.                                  |
-| Themes         | :white_check_mark: | https://github.com/p2-inc/keycloak-themes         | Login and email theme customizations via Realm attributes without deploying an extension. |
-| User Migration | :white_check_mark: | https://github.com/p2-inc/keycloak-user-migration | User migration storage provider and API client.                                           |
+| Component               | Status             | Repository                                                    | Description                                                                               |
+| ----------------------- | ------------------ | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Admin Portal            | :white_check_mark: | https://github.com/p2-inc/phasetwo-admin-portal               | User self-management for their account and organizations.                                 |
+| Admin UI                | :white_check_mark: | https://github.com/p2-inc/keycloak                            | Admin UI customizations.                                                                  |
+| Events                  | :white_check_mark: | https://github.com/p2-inc/keycloak-events                     | All event listener implementations.                                                       |
+| IdP Wizards             | :white_check_mark: | https://github.com/p2-inc/idp-wizard                          | Identity Provider setup wizards for self-management of SSO admins and organizations.      |
+| Magic Link              | :white_check_mark: | https://github.com/p2-inc/keycloak-magic-link                 | Magic Link Authentication. Created with an Authenticator or Resource.                     |
+| Organizations           | :white_check_mark: | https://github.com/p2-inc/keycloak-orgs                       | Organizations multi-tenant entities, resources and APIs.                                  |
+| Themes                  | :white_check_mark: | https://github.com/p2-inc/keycloak-themes                     | Login and email theme customizations via Realm attributes without deploying an extension. |
+| User Migration          | :white_check_mark: | https://github.com/p2-inc/keycloak-user-migration             | User migration storage provider and API client.                                           |
+| Apple Identity Provider | :white_check_mark: | https://github.com/klausbetz/apple-identity-provider-keycloak | Enables Sign in with Apple for web-based and native applications (via token-exchange)     |
 
 ## Differences
 
