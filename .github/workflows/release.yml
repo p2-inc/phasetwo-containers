@@ -9,7 +9,7 @@ env:
   # Version 26.3.0
   VERSION_MAJOR: 26
   VERSION_SUBMAJOR: 3
-  VERSION_MINOR: 0
+  VERSION_MINOR: 1
 
 jobs:
   release-public:
