@@ -5,6 +5,10 @@
   <packaging>pom</packaging>
   <version>0.1-SNAPSHOT</version>
 
+  <name>Phase Two Keycloak containers</name>
+  <description>Builds the base Phase Two Keycloak Docker image.</description>
+  <url>https://github.com/p2-inc/phasetwo-containers</url>
+
   <scm>
     <url>https://github.com/p2-inc/phasetwo-containers</url>
     <connection>scm:git:git@github.com:p2-inc/phasetwo-containers.git</connection>
