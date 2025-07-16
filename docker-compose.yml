@@ -31,6 +31,7 @@ services:
       KC_DB_URL_PROPERTIES: '?sslmode=disable&useCockroachMetadata=true'
       KC_DB_USERNAME: root
       KC_FEATURES: persistent-user-sessions
+      KC_FEATURES_DISABLED: organization
       KC_HEALTH_ENABLED: true
       KC_HOSTNAME_STRICT: 'false'
       KC_HTTP_ENABLED: 'true'
