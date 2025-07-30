@@ -52,7 +52,7 @@ services:
   caddy:
     image: caddy:2.4.6-alpine
     restart: unless-stopped
-    command: caddy reverse-proxy --from https://s01.villamiramar.fr:443 --to http://keycloak:8080
+    command: caddy reverse-proxy --from https://localhost:443 --to http://keycloak:8080
     ports:
       - 80:80
       - 443:443
