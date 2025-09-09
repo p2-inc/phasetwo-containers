@@ -1,4 +1,4 @@
-FROM quay.io/phasetwo/keycloak-crdb:26.3.2 as builder
+FROM quay.io/phasetwo/keycloak-crdb:26.3.2 AS builder
 
 ENV KC_METRICS_ENABLED=true
 ENV KC_HEALTH_ENABLED=true
