@@ -1,4 +1,4 @@
-FROM quay.io/phasetwo/keycloak-crdb:26.3.2 AS builder
+FROM quay.io/phasetwo/keycloak-crdb:26.3.4 AS builder
 
 ENV KC_METRICS_ENABLED=true
 ENV KC_HEALTH_ENABLED=true
@@ -17,7 +17,7 @@ COPY ./libs/bundle/target/bundle*/*.jar /opt/keycloak/providers/
 
 RUN /opt/keycloak/bin/kc.sh --verbose build --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
 
-FROM quay.io/phasetwo/keycloak-crdb:26.3.2
+FROM quay.io/phasetwo/keycloak-crdb:26.3.4
 
 #USER root
 # remediation for vulnerabilities
