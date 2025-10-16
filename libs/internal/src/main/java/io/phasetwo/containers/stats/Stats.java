@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -16,6 +17,7 @@ public final class Stats {
 
   public static final String PHASETWO_ANALYTICS_DISABLED_KEY = "PHASETWO_ANALYTICS_DISABLED";
   public static final String PHASETWO_ANALYTICS_URL = "https://stats.authit.dev/collect";
+  private static final int TIMEOUT = 10000;
 
   public static boolean statsEnabled() {
     String disabled = System.getenv(PHASETWO_ANALYTICS_DISABLED_KEY);
@@ -55,7 +57,17 @@ public final class Stats {
       }
     }
 
-    try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+    RequestConfig requestConfig =
+        RequestConfig.custom()
+            .setConnectTimeout(TIMEOUT)
+            .setConnectionRequestTimeout(TIMEOUT)
+            .setSocketTimeout(TIMEOUT)
+            .build();
+    try (CloseableHttpClient httpClient =
+        HttpClients.custom()
+            .setDefaultRequestConfig(requestConfig)
+            .disableAutomaticRetries()
+            .build()) {
       HttpGet request = new HttpGet(urlWithParams.toString());
       try (CloseableHttpResponse response = httpClient.execute(request)) {
         String rStr =
