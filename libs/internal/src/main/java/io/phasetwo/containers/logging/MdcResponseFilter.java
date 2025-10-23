@@ -14,5 +14,6 @@ public class MdcResponseFilter implements ContainerResponseFilter {
       ContainerRequestContext requestContext, ContainerResponseContext responseContext)
       throws IOException {
     MDC.remove("realm");
+    MDC.remove("cluster");
   }
 }
