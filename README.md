@@ -86,7 +86,7 @@ You can try it in ephemeral, development mode with:
 ```bash
 docker run --name phasetwo_test --rm -p 8080:8080 \
     -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e KC_HTTP_RELATIVE_PATH=/auth \
-    quay.io/phasetwo/phasetwo-keycloak:$VERSION \
+    quay.io/phasetwo/phasetwo-keycloak:26.5.0 \
     start-dev --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
 ```
 
