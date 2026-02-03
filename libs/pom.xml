@@ -38,10 +38,10 @@
     <keycloak.version>26.5.2</keycloak.version>
     <keycloak-events.version>0.51</keycloak-events.version>
     <keycloak-magic-link.version>0.53</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.130</keycloak-orgs.version>
+    <keycloak-orgs.version>0.135</keycloak-orgs.version>
     <keycloak-themes.version>0.46</keycloak-themes.version>
-    <phasetwo-admin-portal.version>0.48</phasetwo-admin-portal.version>
-    <phasetwo-idp-wizard.version>0.35</phasetwo-idp-wizard.version>
+    <phasetwo-admin-portal.version>0.50</phasetwo-admin-portal.version>
+    <phasetwo-idp-wizard.version>0.36</phasetwo-idp-wizard.version>
     <auto-service.version>1.1.1</auto-service.version>
     <guava.version>33.0.0-jre</guava.version>
     <lombok.version>1.18.42</lombok.version>
