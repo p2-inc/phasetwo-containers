@@ -3,12 +3,6 @@ name: 'Verify docker build'
 on:
   pull_request:
 
-env:
-  # Version 26.5.4
-  VERSION_MAJOR: 26
-  VERSION_SUBMAJOR: 5
-  VERSION_MINOR: 4
-
 jobs:
   verify-docker-build:
     name: 'Verify docker build'
