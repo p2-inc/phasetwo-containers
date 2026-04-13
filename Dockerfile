@@ -17,7 +17,7 @@ COPY ./libs/bundle/target/bundle*/*.jar /opt/keycloak/providers/
 
 RUN /opt/keycloak/bin/kc.sh --verbose build --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
 
-FROM quay.io/phasetwo/keycloak-crdb:26.4.7
+FROM quay.io/phasetwo/keycloak-crdb:26.5.6
 
 #USER root
 # remediation for vulnerabilities

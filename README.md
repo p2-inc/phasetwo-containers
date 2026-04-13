@@ -65,6 +65,32 @@ cd ..
 docker build -t quay.io/phasetwo/phasetwo-keycloak:$VERSION -f Dockerfile .
 ```
 
+## Local testing
+
+For local testing, `VERSION` can be any valid Docker tag. It is only used to tag the image you build and run locally. A value like `26.4.7-local` or `dep-bump-test` is fine.
+
+These examples use the short local image name `phasetwo-keycloak:$VERSION` for clarity. The important part is that the image name and tag in `docker build` and `docker run` must match exactly.
+
+If you are testing local changes to the Maven build, for example a dependency bump in `libs/pom.xml`, you can use:
+
+```bash
+export VERSION=26.5.6-local
+export IMAGE=phasetwo-keycloak:$VERSION
+
+cd libs/
+mvn clean package
+cd ..
+
+docker build -t $IMAGE -f Dockerfile .
+
+docker run --name phasetwo_local_test --rm -p 8080:8080 \
+    -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -e KC_HTTP_RELATIVE_PATH=/auth \
+    $IMAGE \
+    start-dev --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
+```
+
+If you are bumping `keycloak.version`, also update the base image tag in the `FROM quay.io/phasetwo/keycloak-crdb:...` lines in the `Dockerfile`. Otherwise the local image will still be built from the old Keycloak base image.
+
 ## Distribution
 
 ```
