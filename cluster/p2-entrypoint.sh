@@ -18,4 +18,4 @@ fi
 # run the keycloak entrypoint with the given params
 RUN_OPTS="$@"
 echo "Running Keycloak with kc.sh $RUN_OPTS"
-/opt/keycloak/bin/kc.sh $RUN_OPTS
+exec /opt/keycloak/bin/kc.sh $RUN_OPTS
