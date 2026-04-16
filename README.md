@@ -80,6 +80,16 @@ docker compose up
 
 This uses the local `docker-compose.yml` to rebuild the `keycloak` image and start the supporting services. When you are done, stop the stack with `docker compose down`.
 
+The default compose stack starts `cockroach` and `keycloak` only. The `caddy` reverse proxy is now behind the `public-proxy` profile so local testing does not try to issue a public TLS certificate.
+
+```bash
+# optional reverse proxy for local HTTP testing
+docker compose --profile public-proxy up
+
+# optional public HTTPS endpoint
+CADDY_FROM=https://your-hostname:443 docker compose --profile public-proxy up
+```
+
 If you are bumping `keycloak.version`, also update the base image tag in the `FROM quay.io/phasetwo/keycloak-crdb:...` lines in the `Dockerfile`. Otherwise the local image will still be built from the old Keycloak base image.
 
 ## Distribution
