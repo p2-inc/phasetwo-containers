@@ -35,16 +35,18 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>21</java.version>
     <main.java.package>io.phasetwo.containers</main.java.package>
-    <keycloak.version>26.5.7</keycloak.version>
+    <keycloak.version>26.6.1</keycloak.version>
     <keycloak-events.version>0.53</keycloak-events.version>
-    <keycloak-magic-link.version>0.61</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.152</keycloak-orgs.version>
+    <keycloak-magic-link.version>0.68</keycloak-magic-link.version>
+    <keycloak-orgs.version>0.154-SNAPSHOT</keycloak-orgs.version>
+    <keycloak-scim-server.version>1.5.0-SNAPSHOT</keycloak-scim-server.version>
+    <phasetwo-org-scim.version>0.1</phasetwo-org-scim.version>
     <keycloak-themes.version>0.60</keycloak-themes.version>
-    <phasetwo-admin-portal.version>0.55</phasetwo-admin-portal.version>
-    <phasetwo-idp-wizard.version>0.44</phasetwo-idp-wizard.version>
+    <phasetwo-admin-portal.version>0.56</phasetwo-admin-portal.version>
+    <phasetwo-idp-wizard.version>0.46</phasetwo-idp-wizard.version>
     <auto-service.version>1.1.1</auto-service.version>
     <guava.version>33.0.0-jre</guava.version>
-    <lombok.version>1.18.42</lombok.version>
+    <lombok.version>1.18.46</lombok.version>
   </properties>
 
   <build>

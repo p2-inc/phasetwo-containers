@@ -47,6 +47,16 @@
       <version>${keycloak-orgs.version}</version>
     </dependency>
     <dependency>
+      <groupId>fi.metatavu.keycloak.scim.server</groupId>
+      <artifactId>keycloak-scim-server</artifactId>
+      <version>${keycloak-scim-server.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.phasetwo</groupId>
+      <artifactId>phasetwo-org-scim</artifactId>
+      <version>${phasetwo-org-scim.version}</version>
+    </dependency>
+    <dependency>
       <groupId>io.phasetwo.keycloak</groupId>
       <artifactId>keycloak-themes</artifactId>
       <version>${keycloak-themes.version}</version>

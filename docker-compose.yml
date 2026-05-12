@@ -50,11 +50,9 @@ services:
       - cockroach
     entrypoint: /opt/keycloak/bin/kc.sh --verbose start --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
   caddy:
-    image: caddy:2.4.6-alpine
+    image: caddy:2-alpine
     restart: unless-stopped
-    command: caddy reverse-proxy --from ${CADDY_FROM:-:80} --to http://keycloak:8080
-    profiles:
-      - public-proxy
+    command: caddy reverse-proxy --from ${CADDY_FROM:-https://localhost:443} --to http://keycloak:8080
     ports:
       - 80:80
       - 443:443
