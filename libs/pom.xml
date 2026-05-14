@@ -41,7 +41,7 @@
     <keycloak-orgs.version>0.154-SNAPSHOT</keycloak-orgs.version>
     <keycloak-scim-server.version>1.5.0-SNAPSHOT</keycloak-scim-server.version>
     <phasetwo-org-scim.version>0.1</phasetwo-org-scim.version>
-    <keycloak-themes.version>0.60</keycloak-themes.version>
+    <keycloak-themes.version>0.63-SNAPSHOT</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.56</phasetwo-admin-portal.version>
     <phasetwo-idp-wizard.version>0.46</phasetwo-idp-wizard.version>
     <auto-service.version>1.1.1</auto-service.version>
