@@ -3,8 +3,6 @@ version: '3'
 volumes:
   cockroach_data:
     driver: local
-  caddy_data:
-    driver: local
 
 services:
   cockroach:
@@ -49,16 +47,3 @@ services:
     depends_on:
       - cockroach
     entrypoint: /opt/keycloak/bin/kc.sh --verbose start --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
-  caddy:
-    image: caddy:2.4.6-alpine
-    restart: unless-stopped
-    command: caddy reverse-proxy --from ${CADDY_FROM:-:80} --to http://keycloak:8080
-    profiles:
-      - public-proxy
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - caddy_data:/data
-    depends_on:
-      - keycloak

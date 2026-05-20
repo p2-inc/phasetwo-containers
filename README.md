@@ -54,26 +54,32 @@ There will also be major/minor/patch version tags released. E.g.
 
 ## Building
 
-This project uses a maven project in `libs/` to fetch all of the jars that will be included in the Docker image.
+The Maven build of the `libs/` project is performed inside the `Dockerfile`
+itself, so a single `docker build` command produces the final image — no
+host-side JDK or Maven install required.
 
 ```bash
-# build the libs project
-cd libs/
-mvn clean package
-cd ..
-# build the image for local testing
-docker build -t quay.io/phasetwo/phasetwo-keycloak:$VERSION -f Dockerfile .
+docker build -t quay.io/phasetwo/phasetwo-keycloak:$VERSION .
 ```
+
+The build uses three stages:
+
+1. `libs-builder` — a `maven:3.9-eclipse-temurin-21` stage that runs
+   `mvn clean package` against `libs/` to produce the bundled provider jars.
+   It is pinned to `$BUILDPLATFORM` so multi-arch builds are not slowed by
+   qemu emulation, and uses a BuildKit `--mount=type=cache` for `~/.m2`.
+2. `keycloak-builder` — based on `quay.io/phasetwo/keycloak-crdb`, copies
+   the jars (from stage 1 and from `libs/ext/`) into
+   `/opt/keycloak/providers/` and runs `kc.sh build` to pre-augment
+   Quarkus.
+3. Final runtime — based on `cgr.dev/chainguard/wolfi-base`, carries only
+   the augmented `/opt/keycloak` tree across from stage 2, installs an
+   OpenJDK 21 JRE + bash + CA bundle, and runs as a non-root user. See
+   the *Hardening* section below.
 
 ## Local testing
 
-If you are testing local changes to the Maven build, for example a dependency bump in `libs/pom.xml`, you can use:
-
 ```bash
-cd libs/
-mvn clean package
-cd ..
-
 docker compose build
 docker compose up
 ```
@@ -105,6 +111,75 @@ Check to see if there are updated jars:
 cd libs/
 mvn versions:display-dependency-updates
 ```
+
+## Hardening
+
+The runtime image follows the practices in
+<https://keymate.io/blog/hardened-keycloak-container-image>:
+
+- **Chainguard Wolfi base.** The runtime image is built `FROM
+  cgr.dev/chainguard/wolfi-base:latest` — a minimal, daily-rebuilt distro
+  with same-day CVE patching, glibc (no musl quirks for the JVM), and
+  Sigstore-signed packages. The full-distro Keycloak base is only used in
+  the intermediate builder stage.
+- **Minimal runtime package set.** Only three packages are installed on
+  top of Wolfi: `openjdk-21-default-jvm` (JRE), `bash` (for `kc.sh`), and
+  `ca-certificates-bundle`. No package manager utilities, no `curl`, no
+  build tooling in the final layer.
+- **Multi-stage build.** Maven, the JDK compiler, and source files live
+  in builder stages only — the final image carries just `/opt/keycloak`.
+- **Non-root execution and least privilege.** A dedicated `keycloak`
+  account (UID/GID 2000, overridable at build time via
+  `--build-arg USER=… UID=… GID=…`) is created in the Wolfi layer;
+  `/opt/keycloak` is copied with `--chown=keycloak:keycloak`, then a
+  `find … -exec chmod` sweep normalises permissions to **755 for
+  directories, 644 for files, 755 for `bin/*.sh`**, also clearing any
+  setuid/setgid bits inherited from upstream layers.
+- **Build-time Quarkus augmentation.** `kc.sh build` runs at image build
+  time so production deployments can launch with `start --optimized` and
+  skip augmentation on every boot.
+- **JVM hardening via `JAVA_OPTS_APPEND`:**
+  `-XX:+ExitOnOutOfMemoryError`, `-XX:+HeapDumpOnOutOfMemoryError`,
+  `-XX:MaxRAMPercentage=70`, `-XX:InitialRAMPercentage=50`, bounded
+  metaspace, non-blocking entropy (`-Djava.security.egd=file:/dev/urandom`),
+  and `-Djava.awt.headless=true`.
+- **HTTPS-first defaults.** `KC_HTTP_ENABLED=false` ships in the image;
+  deployments that need cleartext on the pod (local docker-compose,
+  ingress-terminated TLS with HTTP upstream) opt in explicitly.
+- **Health/metrics on by default** (`KC_HEALTH_ENABLED`,
+  `KC_METRICS_ENABLED`) so orchestrators can use `/health/live` and
+  `/health/ready` directly. No Dockerfile `HEALTHCHECK` is declared —
+  Kubernetes ignores it; kubelet runs its own probes.
+- **Strict Maven checksums.** The libs build runs with
+  `--strict-checksums` so a corrupted artifact in transit fails the build
+  rather than silently shipping.
+- **No build tooling in the final layer.** Maven, the JDK compiler, and
+  source trees are confined to the builder stages and never copied into
+  the runtime image.
+
+When running under Kubernetes you should additionally set on the pod
+spec:
+
+```yaml
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 2000
+  runAsGroup: 2000
+  fsGroup: 2000
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: ["ALL"]
+volumes:
+  - name: tmp
+    emptyDir: {}
+volumeMounts:
+  - name: tmp
+    mountPath: /tmp
+```
+
+A writable `/tmp` is required because Quarkus uses it for classgen and
+the JVM writes its heap dump there on OOM.
 
 ## Testing
 
