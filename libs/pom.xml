@@ -38,8 +38,8 @@
     <keycloak.version>26.5.7</keycloak.version>
     <keycloak-events.version>0.55</keycloak-events.version>
     <keycloak-magic-link.version>0.68</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.157</keycloak-orgs.version>
-    <keycloak-themes.version>0.60</keycloak-themes.version>
+    <keycloak-orgs.version>0.159</keycloak-orgs.version>
+    <keycloak-themes.version>0.64</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.56</phasetwo-admin-portal.version>
     <phasetwo-idp-wizard.version>0.46</phasetwo-idp-wizard.version>
     <auto-service.version>1.1.1</auto-service.version>
