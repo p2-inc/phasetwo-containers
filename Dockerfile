@@ -3,6 +3,10 @@ FROM quay.io/phasetwo/keycloak-crdb:26.6.1 AS builder
 ENV KC_METRICS_ENABLED=true
 ENV KC_HEALTH_ENABLED=true
 ENV KC_FEATURES=preview
+# keycloak-events 0.55+ ships MdcLoggerEventStoreProviderFactory alongside
+# Keycloak's built-in jpa factory; an explicit selection is required.
+ENV KC_SPI_EVENTS_STORE_PROVIDER=ext-event-mdc-logger-store
+ENV KC_SPI_EVENTS_STORE_EXT_EVENT_MDC_LOGGER_STORE_USE_JPA=true
 
 # jdbc_ping infinispan configuration
 COPY ./conf/cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
@@ -18,6 +22,9 @@ COPY ./libs/bundle/target/bundle*/*.jar /opt/keycloak/providers/
 RUN /opt/keycloak/bin/kc.sh --verbose build --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
 
 FROM quay.io/phasetwo/keycloak-crdb:26.6.1
+
+ENV KC_SPI_EVENTS_STORE_PROVIDER=ext-event-mdc-logger-store
+ENV KC_SPI_EVENTS_STORE_EXT_EVENT_MDC_LOGGER_STORE_USE_JPA=true
 
 #USER root
 # remediation for vulnerabilities
