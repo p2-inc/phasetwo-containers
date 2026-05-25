@@ -14,9 +14,48 @@ jobs:
         uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
-      - name: Verify that Dockerfile builds
+
+      # Build single-arch and load into the local daemon so Trivy can scan
+      # the actual layers this PR would produce.
+      - name: Build image
         uses: docker/build-push-action@v7
         with:
           context: .
-          outputs: type=cacheonly
-          tags: phasetwo-keycloak:ci-test-build
+          platforms: linux/amd64
+          load: true
+          tags: phasetwo-keycloak:pr
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Non-gating Trivy scan — surfaces HIGH/CRITICAL regressions in the PR
+      # checks tab without blocking the merge. Branch protection can flip
+      # exit-code to '1' to make this a hard gate.
+      - name: Trivy — scan PR image (informational)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: phasetwo-keycloak:pr
+          format: table
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+          vex: openvex.json
+          exit-code: '0'
+
+      - name: Trivy — scan PR image (JSON for artifact)
+        if: always()
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: phasetwo-keycloak:pr
+          format: json
+          output: trivy-pr.json
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+          vex: openvex.json
+          exit-code: '0'
+
+      - name: Upload Trivy PR report
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: trivy-pr-${{ github.event.pull_request.number }}
+          path: trivy-pr.json
+          retention-days: 14

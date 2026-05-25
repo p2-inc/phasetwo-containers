@@ -112,53 +112,79 @@ cd libs/
 mvn versions:display-dependency-updates
 ```
 
-## Hardening
+## Security
 
-The runtime image follows the practices in
-<https://keymate.io/blog/hardened-keycloak-container-image>:
+The runtime image follows the practices in the
+[Keymate hardened Keycloak writeup](https://keymate.io/blog/hardened-keycloak-container-image).
+This section consolidates the *what*, the *how it's built*, and the
+*how it's continuously scanned* — everything security-relevant in one
+place.
 
-- **Chainguard Wolfi base.** The runtime image is built `FROM
-  cgr.dev/chainguard/wolfi-base:latest` — a minimal, daily-rebuilt distro
-  with same-day CVE patching, glibc (no musl quirks for the JVM), and
-  Sigstore-signed packages. The full-distro Keycloak base is only used in
-  the intermediate builder stage.
-- **Minimal runtime package set.** Only three packages are installed on
-  top of Wolfi: `openjdk-21-default-jvm` (JRE), `bash` (for `kc.sh`), and
-  `ca-certificates-bundle`. No package manager utilities, no `curl`, no
-  build tooling in the final layer.
-- **Multi-stage build.** Maven, the JDK compiler, and source files live
-  in builder stages only — the final image carries just `/opt/keycloak`.
-- **Non-root execution and least privilege.** A dedicated `keycloak`
-  account (UID/GID 2000, overridable at build time via
-  `--build-arg USER=… UID=… GID=…`) is created in the Wolfi layer;
-  `/opt/keycloak` is copied with `--chown=keycloak:keycloak`, then a
-  `find … -exec chmod` sweep normalises permissions to **755 for
-  directories, 644 for files, 755 for `bin/*.sh`**, also clearing any
-  setuid/setgid bits inherited from upstream layers.
-- **Build-time Quarkus augmentation.** `kc.sh build` runs at image build
-  time so production deployments can launch with `start --optimized` and
-  skip augmentation on every boot.
-- **JVM hardening via `JAVA_OPTS_APPEND`:**
-  `-XX:+ExitOnOutOfMemoryError`, `-XX:+HeapDumpOnOutOfMemoryError`,
-  `-XX:MaxRAMPercentage=70`, `-XX:InitialRAMPercentage=50`, bounded
-  metaspace, non-blocking entropy (`-Djava.security.egd=file:/dev/urandom`),
-  and `-Djava.awt.headless=true`.
-- **HTTPS-first defaults.** `KC_HTTP_ENABLED=false` ships in the image;
-  deployments that need cleartext on the pod (local docker-compose,
-  ingress-terminated TLS with HTTP upstream) opt in explicitly.
-- **Health/metrics on by default** (`KC_HEALTH_ENABLED`,
-  `KC_METRICS_ENABLED`) so orchestrators can use `/health/live` and
+### Image properties
+
+- **Base: Chainguard Wolfi** (`cgr.dev/chainguard/wolfi-base:latest`).
+  Minimal, daily-rebuilt distro with same-day CVE patching, glibc (no
+  musl quirks for the JVM), and Sigstore-signed packages. The
+  full-distro Keycloak base only appears in the intermediate builder
+  stage and is dropped before the final image is assembled.
+- **Three runtime packages only:** `openjdk-21-default-jvm` (JRE),
+  `bash` (required by `kc.sh`), and `ca-certificates-bundle`. No
+  package manager utilities (`apk`'s cache is wiped at the end of the
+  install step), no `curl`/`wget`, no build tooling.
+- **Non-root, least-privilege account.** A dedicated `keycloak`
+  account is created with UID/GID 2000 (UIDs are overridable at build
+  time via `--build-arg USER=… --build-arg UID=… --build-arg GID=…`).
+  UID 2000 avoids the UID-1000 collision with default user accounts
+  used by many host systems.
+- **Strict file permissions.** After copying `/opt/keycloak` into
+  place, a `find … -exec chmod` sweep normalises every directory to
+  `755`, every file to `644`, restores `755` on `bin/*.sh`, and clears
+  any setuid/setgid bits inherited from upstream layers.
+- **JVM hardened via `JAVA_OPTS_APPEND`:**
+  - `-XX:+ExitOnOutOfMemoryError` — terminate cleanly on OOM rather
+    than run degraded.
+  - `-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heap.hprof`
+    — capture diagnostics before exit.
+  - `-XX:MaxRAMPercentage=70 -XX:InitialRAMPercentage=50` — bound the
+    heap to container memory; the remaining 30 % covers native memory
+    and metaspace.
+  - `-XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m` — bound
+    metaspace to prevent classloader leaks.
+  - `-Djava.security.egd=file:/dev/urandom` — non-blocking entropy so
+    startup never stalls on `/dev/random`.
+  - `-Djava.awt.headless=true` and `-Dfile.encoding=UTF-8`.
+- **HTTPS-first defaults.** `KC_HTTP_ENABLED=false` ships in the
+  image; cleartext on the pod is an explicit opt-in for callers that
+  need it (local `docker-compose` already does this).
+- **Health and metrics enabled by default** (`KC_HEALTH_ENABLED`,
+  `KC_METRICS_ENABLED`) so Kubernetes can probe `/health/live` and
   `/health/ready` directly. No Dockerfile `HEALTHCHECK` is declared —
-  Kubernetes ignores it; kubelet runs its own probes.
-- **Strict Maven checksums.** The libs build runs with
-  `--strict-checksums` so a corrupted artifact in transit fails the build
-  rather than silently shipping.
-- **No build tooling in the final layer.** Maven, the JDK compiler, and
-  source trees are confined to the builder stages and never copied into
-  the runtime image.
+  kubelet ignores it and runs its own probes.
 
-When running under Kubernetes you should additionally set on the pod
-spec:
+### Build pipeline (security properties)
+
+`docker build .` produces the final image from a three-stage build (see
+[Building](#building) for the operational view). The security-relevant
+points:
+
+1. **Stage 1 (`libs-builder`)** — runs `mvn clean package` with
+   `--strict-checksums`, so a corrupted artifact from Maven Central
+   fails the build rather than silently shipping. Uses a BuildKit
+   `--mount=type=cache` for `~/.m2` to keep this layer fast without
+   embedding the cache in the image.
+2. **Stage 2 (`keycloak-builder`)** — runs `kc.sh build` to
+   pre-augment Quarkus, so production deployments can launch with
+   `start --optimized` (no augmentation at runtime, no JDK tools needed
+   at boot).
+3. **Stage 3 (final runtime)** — `FROM cgr.dev/chainguard/wolfi-base`.
+   Carries **only** `/opt/keycloak` across from stage 2; Maven, the JDK
+   compiler, source files, and the upstream Keycloak base image's
+   surface area never make it into the published image.
+
+### Kubernetes deployment
+
+The image is built non-root, so the orchestrator should enforce the
+same from the outside. Recommended pod spec:
 
 ```yaml
 securityContext:
@@ -180,6 +206,58 @@ volumeMounts:
 
 A writable `/tmp` is required because Quarkus uses it for classgen and
 the JVM writes its heap dump there on OOM.
+
+### Vulnerability scanning
+
+CVE management is split across three GitHub Actions workflows. The
+unifying idea is that the Wolfi base image is rebuilt daily upstream,
+so **triggering a fresh release is itself the patch mechanism** for
+OS-package CVEs — no in-place patch layer (Copa, etc.) is needed.
+
+| Workflow | When | What it does | Gate? |
+| --- | --- | --- | --- |
+| `verify.yml` | every PR | builds the image, runs Trivy + OpenVEX, uploads report | non-gating by default (`exit-code: 0`); flip to `'1'` + branch protection for hard gating |
+| `release.yml` | every push to `main`, plus `workflow_dispatch` from `security-scan.yml` | builds and pushes multi-arch, then scans the just-pushed `quay.io/...:<VERSION_TAG>` and uploads SARIF (for the GitHub Security tab) + JSON | non-gating record of what shipped |
+| `security-scan.yml` | daily 06:17 UTC + `workflow_dispatch` | pulls `quay.io/phasetwo/phasetwo-keycloak:latest`, scans both `linux/amd64` and `linux/arm64` for OS-package CVEs, single-arch for library CVEs, all with OpenVEX applied | dispatches `release.yml` if any OS-package HIGH/CRITICAL CVE remains |
+
+The daily-scan → dispatch loop works because the rebuild's `apk add`
+resolves against the now-patched Wolfi repositories, so the freshly
+published image goes out clean.
+
+**Library CVEs are reported but do not trigger a rebuild.** A Wolfi
+refresh can't fix CVEs in the bundled JARs — the fix path for those is
+a `libs/pom.xml` dependency bump, which needs human review. The daily
+scan still surfaces them in the job summary and uploaded artifact so
+they don't get lost.
+
+### Documenting false positives (OpenVEX)
+
+When Trivy flags a CVE that does not apply to this image — e.g. a
+version-string parsing bug in the scanner, or a vulnerability in a code
+path that isn't reachable here — add an OpenVEX statement to
+`openvex.json` at the repo root. All three workflows pass that file to
+Trivy via `vex:` so documented FPs are filtered without blanket
+`--ignore-unfixed` style suppressions.
+
+```json
+{
+  "vulnerability": { "name": "CVE-2025-59250" },
+  "products": [
+    { "@id": "pkg:maven/com.microsoft.sqlserver/mssql-jdbc@13.2.1" }
+  ],
+  "status": "not_affected",
+  "justification": "vulnerable_code_not_present",
+  "impact_statement": "Version 13.2.1.jre11 is in use but Trivy incorrectly parses the version string. This version is patched and safe."
+}
+```
+
+Allowed `justification` values per the OpenVEX v0.2.0 spec:
+`component_not_present`, `vulnerable_code_not_present`,
+`vulnerable_code_not_in_execute_path`,
+`vulnerable_code_cannot_be_controlled_by_adversary`, or
+`inline_mitigations_already_exist`. Always include an
+`impact_statement` so auditors have a paper trail — every entry lands
+through normal PR review.
 
 ## Testing
 

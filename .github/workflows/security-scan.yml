@@ -1,0 +1,137 @@
+name: Daily security scan
+
+# Scans the most recently published image on quay.io against the latest CVE
+# database. If HIGH/CRITICAL CVEs are found in OS (apk) packages, dispatches
+# release.yml to rebuild — the rebuild's `apk add` pulls the now-patched
+# Wolfi packages and the new image goes out clean. Library CVEs in bundled
+# JARs are reported but do not trigger a rebuild, since the fix path for
+# those is a libs/pom.xml dependency bump (manual review).
+
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write   # required to dispatch release.yml via gh CLI
+
+env:
+  IMAGE: quay.io/phasetwo/phasetwo-keycloak:latest
+
+jobs:
+  scan:
+    name: Trivy scan published image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (for openvex.json)
+        uses: actions/checkout@v6
+
+      # OS-package scan, per arch — these are the CVEs a Wolfi rebuild can
+      # actually fix, so this is the input to the rebuild-trigger decision.
+      - name: Trivy — OS scan (linux/amd64)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE }}
+          format: json
+          output: trivy-os-amd64.json
+          platform: linux/amd64
+          severity: HIGH,CRITICAL
+          vuln-type: os
+          ignore-unfixed: true
+          vex: openvex.json
+          exit-code: '0'
+
+      - name: Trivy — OS scan (linux/arm64)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE }}
+          format: json
+          output: trivy-os-arm64.json
+          platform: linux/arm64
+          severity: HIGH,CRITICAL
+          vuln-type: os
+          ignore-unfixed: true
+          vex: openvex.json
+          exit-code: '0'
+
+      # Library CVEs (JARs inside the Keycloak distribution). A Wolfi rebuild
+      # won't fix these — they need libs/pom.xml dependency bumps — so we
+      # collect them as an informational report only, not as a rebuild
+      # trigger. Single arch is sufficient; the JAR contents are identical.
+      - name: Trivy — library scan (informational)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE }}
+          format: json
+          output: trivy-libs.json
+          platform: linux/amd64
+          severity: HIGH,CRITICAL
+          vuln-type: library
+          ignore-unfixed: false
+          vex: openvex.json
+          exit-code: '0'
+
+      - name: Count CVEs and decide whether to trigger rebuild
+        id: triage
+        run: |
+          os_amd64=$(jq '[.Results[]? | .Vulnerabilities? // [] | .[]] | length' trivy-os-amd64.json)
+          os_arm64=$(jq '[.Results[]? | .Vulnerabilities? // [] | .[]] | length' trivy-os-arm64.json)
+          libs=$(jq '[.Results[]? | .Vulnerabilities? // [] | .[]] | length' trivy-libs.json)
+          os_total=$((os_amd64 + os_arm64))
+
+          echo "OS CVEs (amd64): $os_amd64"
+          echo "OS CVEs (arm64): $os_arm64"
+          echo "Library CVEs: $libs"
+
+          {
+            echo "os_amd64=$os_amd64"
+            echo "os_arm64=$os_arm64"
+            echo "libs=$libs"
+            echo "os_total=$os_total"
+            if [ "$os_total" -gt 0 ]; then
+              echo "should_rebuild=true"
+            else
+              echo "should_rebuild=false"
+            fi
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Upload Trivy reports
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: trivy-daily-${{ github.run_id }}
+          path: trivy-*.json
+          retention-days: 90
+
+      - name: Dispatch release.yml (rebuild against fresh Wolfi base)
+        if: steps.triage.outputs.should_rebuild == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo "Found ${{ steps.triage.outputs.os_total }} HIGH/CRITICAL OS-package CVEs."
+          echo "Dispatching release.yml to rebuild against the latest Wolfi base."
+          gh workflow run release.yml --ref main
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## Daily Trivy scan — $IMAGE"
+            echo ""
+            echo "| Surface | HIGH/CRITICAL CVEs |"
+            echo "| --- | --- |"
+            echo "| OS packages (linux/amd64) | ${{ steps.triage.outputs.os_amd64 }} |"
+            echo "| OS packages (linux/arm64) | ${{ steps.triage.outputs.os_arm64 }} |"
+            echo "| Java libraries | ${{ steps.triage.outputs.libs }} |"
+            echo ""
+            if [ "${{ steps.triage.outputs.should_rebuild }}" = "true" ]; then
+              echo "**Triggered release.yml** to rebuild against a fresh Wolfi base."
+            else
+              echo "_No OS CVEs require a rebuild._"
+            fi
+            if [ "${{ steps.triage.outputs.libs }}" != "0" ]; then
+              echo ""
+              echo "Library CVEs are present and require a manual \`libs/pom.xml\` review — they cannot be fixed by a Wolfi base refresh."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
