@@ -29,30 +29,34 @@ jobs:
 
       # OS-package scan, per arch — these are the CVEs a Wolfi rebuild can
       # actually fix, so this is the input to the rebuild-trigger decision.
+      # The action wrapper has no `vex` or `platform` inputs; both are
+      # passed via the Trivy CLI's TRIVY_<FLAG> env-var convention.
       - name: Trivy — OS scan (linux/amd64)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
+        env:
+          TRIVY_VEX: openvex.json
+          TRIVY_PLATFORM: linux/amd64
         with:
           image-ref: ${{ env.IMAGE }}
           format: json
           output: trivy-os-amd64.json
-          platform: linux/amd64
           severity: HIGH,CRITICAL
           vuln-type: os
           ignore-unfixed: true
-          vex: openvex.json
           exit-code: '0'
 
       - name: Trivy — OS scan (linux/arm64)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
+        env:
+          TRIVY_VEX: openvex.json
+          TRIVY_PLATFORM: linux/arm64
         with:
           image-ref: ${{ env.IMAGE }}
           format: json
           output: trivy-os-arm64.json
-          platform: linux/arm64
           severity: HIGH,CRITICAL
           vuln-type: os
           ignore-unfixed: true
-          vex: openvex.json
           exit-code: '0'
 
       # Library CVEs (JARs inside the Keycloak distribution). A Wolfi rebuild
@@ -60,16 +64,17 @@ jobs:
       # collect them as an informational report only, not as a rebuild
       # trigger. Single arch is sufficient; the JAR contents are identical.
       - name: Trivy — library scan (informational)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
+        env:
+          TRIVY_VEX: openvex.json
+          TRIVY_PLATFORM: linux/amd64
         with:
           image-ref: ${{ env.IMAGE }}
           format: json
           output: trivy-libs.json
-          platform: linux/amd64
           severity: HIGH,CRITICAL
           vuln-type: library
           ignore-unfixed: false
-          vex: openvex.json
           exit-code: '0'
 
       - name: Count CVEs and decide whether to trigger rebuild

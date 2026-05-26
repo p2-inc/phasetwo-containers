@@ -31,25 +31,29 @@ jobs:
       # checks tab without blocking the merge. Branch protection can flip
       # exit-code to '1' to make this a hard gate.
       - name: Trivy — scan PR image (informational)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
+        env:
+          # The action wrapper has no `vex` input; the Trivy CLI reads
+          # TRIVY_VEX as the env-var equivalent of `--vex`.
+          TRIVY_VEX: openvex.json
         with:
           image-ref: phasetwo-keycloak:pr
           format: table
           severity: HIGH,CRITICAL
           vuln-type: os,library
-          vex: openvex.json
           exit-code: '0'
 
       - name: Trivy — scan PR image (JSON for artifact)
         if: always()
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
+        env:
+          TRIVY_VEX: openvex.json
         with:
           image-ref: phasetwo-keycloak:pr
           format: json
           output: trivy-pr.json
           severity: HIGH,CRITICAL
           vuln-type: os,library
-          vex: openvex.json
           exit-code: '0'
 
       - name: Upload Trivy PR report

@@ -1,0 +1,10 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "@id": "https://github.com/p2-inc/phasetwo-containers/openvex.json",
+  "author": "Phase Two Security",
+  "role": "Document Author",
+  "timestamp": "2026-05-21T00:00:00Z",
+  "version": 1,
+  "tooling": "manually maintained",
+  "statements": []
+}

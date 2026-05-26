@@ -76,25 +76,29 @@ jobs:
       # yesterday's daily scan. OpenVEX is applied so documented false
       # positives don't pollute the report.
       - name: Trivy — post-push scan (SARIF for GitHub Security tab)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
+        env:
+          # The action wrapper has no `vex` input; the Trivy CLI reads
+          # TRIVY_VEX as the env-var equivalent of `--vex`.
+          TRIVY_VEX: openvex.json
         with:
           image-ref: quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_TAG }}
           format: sarif
           output: trivy-release.sarif
           severity: HIGH,CRITICAL
           vuln-type: os,library
-          vex: openvex.json
           exit-code: '0'
 
       - name: Trivy — post-push scan (JSON for downstream tooling)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
+        env:
+          TRIVY_VEX: openvex.json
         with:
           image-ref: quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_TAG }}
           format: json
           output: trivy-release.json
           severity: HIGH,CRITICAL
           vuln-type: os,library
-          vex: openvex.json
           exit-code: '0'
 
       - name: Upload Trivy release report
