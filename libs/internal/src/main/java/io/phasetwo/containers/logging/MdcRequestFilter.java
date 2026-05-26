@@ -28,13 +28,15 @@ public class MdcRequestFilter implements ContainerRequestFilter {
       String realmName = session.getContext().getRealm().getName();
       MDC.put("realm", realmName);
     }
-    getCluster().ifPresent(cluster -> {
-        MDC.put("cluster", cluster);
-      });
+    getCluster()
+        .ifPresent(
+            cluster -> {
+              MDC.put("cluster", cluster);
+            });
   }
 
   public static final String PHASETWO_CLUSTER_KEY = "PHASETWO_CLUSTER";
-  
+
   private static Optional<String> getCluster() {
     return Optional.ofNullable(System.getenv(PHASETWO_CLUSTER_KEY));
   }
