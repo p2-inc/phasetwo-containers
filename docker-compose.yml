@@ -35,7 +35,7 @@ services:
       KC_HTTP_ENABLED: 'true'
       KC_HTTP_MANAGEMENT_PORT: 9000
       KC_ISPN_DB_VENDOR: cockroachdb
-      KC_LOG_LEVEL: "INFO,io.phasetwo:DEBUG"
+      KC_LOG_LEVEL: "INFO,io.phasetwo:DEBUG,org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory:DEBUG"
       KC_METRICS_ENABLED: true
       KC_PROXY_HEADERS: 'xforwarded'
       KC_TRANSACTION_JTA_ENABLED: 'false'

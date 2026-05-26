@@ -9,8 +9,6 @@ ENV KC_CACHE_CONFIG_FILE=cache-ispn-jdbc-ping.xml
 
 COPY cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
 
-#COPY ./lib/*.jar /opt/keycloak/providers/
-
 RUN /opt/keycloak/bin/kc.sh build --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
 
 FROM quay.io/phasetwo/phasetwo-keycloak:latest
