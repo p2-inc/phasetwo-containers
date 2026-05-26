@@ -12,7 +12,6 @@ ENV KC_SPI_EVENTS_STORE_PROVIDER=ext-event-mdc-logger-store
 ENV KC_SPI_EVENTS_STORE_EXT_EVENT_MDC_LOGGER_STORE_USE_JPA=true
 
 COPY cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
-COPY p2-entrypoint.sh /opt/keycloak/bin/p2-entrypoint.sh
 
 #COPY ./lib/*.jar /opt/keycloak/providers/
 
@@ -26,6 +25,3 @@ ENV KC_SPI_EVENTS_STORE_EXT_EVENT_MDC_LOGGER_STORE_USE_JPA=true
 COPY --from=builder /opt/keycloak/lib/quarkus/ /opt/keycloak/lib/quarkus/
 COPY --from=builder /opt/keycloak/providers/ /opt/keycloak/providers/
 COPY --from=builder /opt/keycloak/conf/cache-ispn-jdbc-ping.xml /opt/keycloak/conf/cache-ispn-jdbc-ping.xml
-COPY --from=builder /opt/keycloak/bin/p2-entrypoint.sh /opt/keycloak/bin/p2-entrypoint.sh
-
-ENTRYPOINT [ "/opt/keycloak/bin/p2-entrypoint.sh" ]
