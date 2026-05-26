@@ -6,17 +6,5 @@
   
   <cache-container name="keycloak">
     <transport lock-timeout="60000"/>
-    <local-cache name="realms">
-      <encoding>
-        <key media-type="application/x-java-object"/>
-        <value media-type="application/x-java-object"/>
-      </encoding>
-      <memory max-count="5"/>
-    </local-cache>
-    <distributed-cache name="authenticationSessions" owners="2">
-      <!-- 4 hours lifespan, 1 hour max-idle -->
-      <expiration lifespan="14400000" max-idle="3600000"/>
-      <memory max-count="1000"/>
-    </distributed-cache>
   </cache-container>
 </infinispan>
