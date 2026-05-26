@@ -75,7 +75,7 @@
     <dependency>
       <groupId>dnsjava</groupId>
       <artifactId>dnsjava</artifactId>
-      <version>3.6.4</version>
+      <version>3.6.5</version>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
