@@ -114,8 +114,6 @@ mvn versions:display-dependency-updates
 
 ## Security
 
-The runtime image follows the practices in the
-[Keymate hardened Keycloak writeup](https://keymate.io/blog/hardened-keycloak-container-image).
 This section consolidates the *what*, the *how it's built*, and the
 *how it's continuously scanned* — everything security-relevant in one
 place.
