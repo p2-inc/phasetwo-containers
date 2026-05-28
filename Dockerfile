@@ -86,20 +86,19 @@ ENV JAVA_HOME=/usr/lib/jvm/default-jvm \
     LANG=C.UTF-8 \
     KC_RUN_IN_CONTAINER=true
 
-# JVM hardening — bound heap to container memory, fail-fast on OOM, capture a
-# heap dump for postmortem analysis, and use a non-blocking entropy source so
-# startup never stalls waiting on /dev/random.
+# JVM hardening — only the bits upstream kc.sh doesn't already set. The
+# upstream default JAVA_OPTS (see /opt/keycloak/bin/kc.sh in the base
+# image) already covers `-XX:+ExitOnOutOfMemoryError`, the
+# `MaxRAMPercentage / MinRAMPercentage / InitialRAMPercentage` triple, the
+# `MetaspaceSize / MaxMetaspaceSize` bounds, `-Djava.security.egd=file:/dev/urandom`,
+# `-Dfile.encoding=UTF-8`, G1GC, and FlightRecorder defaults — so we only
+# append:
+#   - HeapDumpOnOutOfMemoryError + HeapDumpPath: capture diagnostics on OOM
+#   - java.awt.headless: avoid AWT init for headless container workloads
 ENV JAVA_OPTS_APPEND="\
--XX:+ExitOnOutOfMemoryError \
 -XX:+HeapDumpOnOutOfMemoryError \
 -XX:HeapDumpPath=/tmp/heap.hprof \
--XX:MaxRAMPercentage=70 \
--XX:InitialRAMPercentage=50 \
--XX:MetaspaceSize=96M \
--XX:MaxMetaspaceSize=256m \
--Djava.security.egd=file:/dev/urandom \
--Djava.awt.headless=true \
--Dfile.encoding=UTF-8"
+-Djava.awt.headless=true"
 
 # Secure defaults: keep management/health on, but disable plaintext HTTP. Any
 # deployment that needs cleartext on the pod (e.g. local docker-compose or a

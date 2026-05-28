@@ -3,6 +3,8 @@ version: '3'
 volumes:
   cockroach_data:
     driver: local
+  caddy_data:
+    driver: local
 
 services:
   cockroach:
@@ -35,9 +37,11 @@ services:
       KC_HTTP_ENABLED: 'true'
       KC_HTTP_MANAGEMENT_PORT: 9000
       KC_ISPN_DB_VENDOR: cockroachdb
-      KC_LOG_LEVEL: "INFO,io.phasetwo:DEBUG,org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory:DEBUG"
+      KC_LOG_LEVEL: "INFO,io.phasetwo:DEBUG,org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory:DEBUG,fi.metatavu.keycloak.scim.server:DEBUG"
       KC_METRICS_ENABLED: true
       KC_PROXY_HEADERS: 'xforwarded'
+      KC_SPI_EVENTS_STORE_PROVIDER: ext-event-mdc-logger-store
+      KC_SPI_EVENTS_STORE_EXT_EVENT_MDC_LOGGER_STORE_USE_JPA: 'true'
       KC_TRANSACTION_JTA_ENABLED: 'false'
       KC_TRANSACTION_XA_ENABLED: 'false'
     ports:
@@ -47,3 +51,18 @@ services:
     depends_on:
       - cockroach
     entrypoint: /opt/keycloak/bin/kc.sh --verbose start --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    command: caddy reverse-proxy --from ${CADDY_FROM:-:80} --to http://keycloak:8080
+    # Caddy is opt-in via `docker compose --profile public-proxy up` so that
+    # the default local-test stack does not try to issue a public TLS cert.
+    profiles:
+      - public-proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - caddy_data:/data
+    depends_on:
+      - keycloak

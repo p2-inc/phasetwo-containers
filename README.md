@@ -131,19 +131,17 @@ place.
   place, a `find … -exec chmod` sweep normalises every directory to
   `755`, every file to `644`, restores `755` on `bin/*.sh`, and clears
   any setuid/setgid bits inherited from upstream layers.
-- **JVM hardened via `JAVA_OPTS_APPEND`:**
-  - `-XX:+ExitOnOutOfMemoryError` — terminate cleanly on OOM rather
-    than run degraded.
+- **JVM hardened via `JAVA_OPTS_APPEND`.** Upstream `kc.sh` (in the
+  Keycloak base image) already bakes in `-XX:+ExitOnOutOfMemoryError`,
+  the `MaxRAMPercentage / MinRAMPercentage / InitialRAMPercentage` heap
+  triple, the `MetaspaceSize / MaxMetaspaceSize` bounds,
+  `-XX:+UseG1GC`, `-Djava.security.egd=file:/dev/urandom`,
+  `-Dfile.encoding=UTF-8`, and the Flight Recorder defaults, so we
+  only append:
   - `-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heap.hprof`
-    — capture diagnostics before exit.
-  - `-XX:MaxRAMPercentage=70 -XX:InitialRAMPercentage=50` — bound the
-    heap to container memory; the remaining 30 % covers native memory
-    and metaspace.
-  - `-XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m` — bound
-    metaspace to prevent classloader leaks.
-  - `-Djava.security.egd=file:/dev/urandom` — non-blocking entropy so
-    startup never stalls on `/dev/random`.
-  - `-Djava.awt.headless=true` and `-Dfile.encoding=UTF-8`.
+    — capture diagnostics on OOM (requires a writable `/tmp`; see the
+    Kubernetes pod spec below).
+  - `-Djava.awt.headless=true` — avoid AWT init for headless workloads.
 - **HTTPS-first defaults.** `KC_HTTP_ENABLED=false` ships in the
   image; cleartext on the pod is an explicit opt-in for callers that
   need it (local `docker-compose` already does this).
