@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  # Allows the daily Trivy scan in security-scan.yml to re-trigger a build
+  # against a freshly patched Wolfi base when OS-package CVEs are detected.
+  workflow_dispatch:
 
 env:
   # Version 26.6.2
@@ -17,13 +20,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Set up JDK 21
-        uses: actions/setup-java@v5
-        with:
-          java-version: "21"
-          distribution: adopt
-      - name: Build with Maven
-        run: cd libs/ && mvn -U --batch-mode package && cd ../
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4
       - name: Set up Docker Buildx
@@ -73,3 +69,44 @@ jobs:
         env:
           TAG: v${{ env.VERSION_TAG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Post-release Trivy scan against the just-pushed image. This is a
+      # record of what shipped — non-gating (the image is already public)
+      # but the SARIF/JSON artifacts let us diff today's release against
+      # yesterday's daily scan. OpenVEX is applied so documented false
+      # positives don't pollute the report.
+      - name: Trivy — post-push scan (SARIF for GitHub Security tab)
+        uses: aquasecurity/trivy-action@v0.36.0
+        env:
+          # The action wrapper has no `vex` input; the Trivy CLI reads
+          # TRIVY_VEX as the env-var equivalent of `--vex`.
+          TRIVY_VEX: openvex.json
+        with:
+          image-ref: quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_TAG }}
+          format: sarif
+          output: trivy-release.sarif
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+          exit-code: '0'
+
+      - name: Trivy — post-push scan (JSON for downstream tooling)
+        uses: aquasecurity/trivy-action@v0.36.0
+        env:
+          TRIVY_VEX: openvex.json
+        with:
+          image-ref: quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_TAG }}
+          format: json
+          output: trivy-release.json
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+          exit-code: '0'
+
+      - name: Upload Trivy release report
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: trivy-release-${{ env.VERSION_TAG }}
+          path: |
+            trivy-release.sarif
+            trivy-release.json
+          retention-days: 90
