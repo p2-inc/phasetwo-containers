@@ -15,7 +15,19 @@ services:
     ports:
       - 26257:26257
   keycloak:
-    build: .
+    build:
+      context: .
+      # Override `host-m2` to expose a host Maven repository to the libs
+      # build stage (see Dockerfile). Default is an empty scratch image, so
+      # CI builds behave the same as `FROM scratch AS host-m2` in the
+      # Dockerfile. To pull in locally-installed SNAPSHOTs, set HOST_M2 to a
+      # directory whose layout mirrors ~/.m2 (contains `repository/`):
+      #   HOST_M2=$HOME/.m2 docker compose build keycloak
+      # Note: BuildKit transfers the entire HOST_M2 directory before
+      # running the build, so for large repos prefer staging a small subset
+      # (e.g. just io/phasetwo/).
+      additional_contexts:
+        - "host-m2=${HOST_M2:-docker-image://scratch}"
     environment:
       KC_DB: cockroach
       KC_HTTP_RELATIVE_PATH: /auth
