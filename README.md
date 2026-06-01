@@ -70,6 +70,52 @@ The build uses three stages:
    OpenJDK 21 JRE + bash + CA bundle, and runs as a non-root user. See
    the *Hardening* section below.
 
+### Building against a local SNAPSHOT (`host-m2`)
+
+If you are iterating on a Phase Two extension (`keycloak-orgs`,
+`keycloak-themes`, etc.) and have installed a SNAPSHOT to your host
+`~/.m2`, you can expose that repository to the in-Dockerfile Maven
+build via the optional `host-m2` named build context. With no override,
+the Dockerfile resolves `host-m2` to an inline empty `FROM scratch`
+stage, so CI behavior is unchanged.
+
+**With `docker build`:**
+
+```bash
+# Default — host-m2 is empty, everything comes from Maven Central
+docker buildx build .
+
+# Override — overlay your host's m2 repo onto the build cache
+docker buildx build --build-context host-m2=$HOME/.m2 .
+```
+
+**With `docker compose`:** the compose file picks the override up from
+the `HOST_M2` env var:
+
+```bash
+HOST_M2=$HOME/.m2 docker compose build keycloak
+```
+
+BuildKit transfers the entire `host-m2` context into its filesystem
+before the build runs, so a large `~/.m2` (multiple GB) can be slow
+and may exhaust Docker Desktop's disk. For faster iteration, stage
+only the SNAPSHOTs you need:
+
+```bash
+mkdir -p /tmp/scoped-m2/repository/io/phasetwo/keycloak
+cp -r ~/.m2/repository/io/phasetwo/keycloak/keycloak-orgs \
+      /tmp/scoped-m2/repository/io/phasetwo/keycloak/
+
+HOST_M2=/tmp/scoped-m2 docker compose build keycloak
+# or:
+docker buildx build --build-context host-m2=/tmp/scoped-m2 .
+```
+
+The Dockerfile uses `cp -rf` to overlay `host-m2` onto its m2 cache,
+so a freshly-installed SNAPSHOT on the host always wins over a stale
+copy in the BuildKit cache mount. Released artifacts are unaffected
+because the overlay only contains what's in your staged directory.
+
 ## Local testing
 
 ```bash
