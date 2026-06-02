@@ -1,11 +1,40 @@
 # syntax=docker/dockerfile:1.7
 
 # ---------------------------------------------------------------------------
+# Default named context: empty layer that satisfies the `from=host-m2` bind
+# mount below when no `--build-context host-m2=...` flag is supplied (CI).
+#
+# To test against a SNAPSHOT in your host's ~/.m2, override the context with
+# a directory whose layout mirrors ~/.m2 (i.e. contains a `repository/`
+# subdir):
+#
+#     docker buildx build --build-context host-m2=$HOME/.m2 .
+#
+# BuildKit copies the entire host context into its filesystem before the
+# build runs, so a large ~/.m2 (multiple GB) can be slow and may exhaust
+# Docker's disk. For faster local testing, stage just the SNAPSHOTs you
+# need:
+#
+#     mkdir -p /tmp/scim-m2/repository/io/phasetwo
+#     cp -r ~/.m2/repository/io/phasetwo/keycloak \
+#           /tmp/scim-m2/repository/io/phasetwo/
+#     docker buildx build --build-context host-m2=/tmp/scim-m2 .
+#
+# ---------------------------------------------------------------------------
+FROM scratch AS host-m2
+
+# ---------------------------------------------------------------------------
 # Stage 1: build the extension/provider jars from libs/ with Maven.
 #
 # Runs on the native BUILDPLATFORM (jars are architecture-independent) so
 # multi-arch builds are not slowed down by qemu emulation of the JVM. Uses
 # a BuildKit cache mount for ~/.m2 to keep incremental rebuilds fast.
+#
+# When `host-m2` is overridden via `--build-context host-m2=$HOME/.m2`, the
+# host repository is overlaid onto the build's m2 cache with `cp -rf`,
+# so locally-installed SNAPSHOTs always win over whatever is in the cache
+# (essential for iterating on a SNAPSHOT: `cp -rn` would leave a stale
+# previous build of the SNAPSHOT in the cache forever).
 # ---------------------------------------------------------------------------
 FROM --platform=$BUILDPLATFORM maven:3.9-eclipse-temurin-21 AS libs-builder
 
@@ -18,12 +47,22 @@ COPY libs/internal/pom.xml ./internal/pom.xml
 COPY libs/bundle/pom.xml ./bundle/pom.xml
 
 RUN --mount=type=cache,target=/root/.m2,sharing=locked \
+    --mount=type=bind,from=host-m2,target=/host-m2,readonly \
+    if [ -d /host-m2/repository ]; then \
+        mkdir -p /root/.m2/repository && \
+        cp -rf /host-m2/repository/. /root/.m2/repository/ 2>/dev/null || true; \
+    fi && \
     mvn -B -e --strict-checksums -ntp \
         -pl . -am dependency:go-offline -DskipTests || true
 
 COPY libs/ ./
 
 RUN --mount=type=cache,target=/root/.m2,sharing=locked \
+    --mount=type=bind,from=host-m2,target=/host-m2,readonly \
+    if [ -d /host-m2/repository ]; then \
+        mkdir -p /root/.m2/repository && \
+        cp -rf /host-m2/repository/. /root/.m2/repository/ 2>/dev/null || true; \
+    fi && \
     mvn -B -e --strict-checksums -ntp clean package -DskipTests
 
 # ---------------------------------------------------------------------------
