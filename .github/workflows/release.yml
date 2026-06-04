@@ -9,10 +9,10 @@ on:
   workflow_dispatch:
 
 env:
-  # Version 26.6.2
+  # Version 26.6.3
   VERSION_MAJOR: 26
   VERSION_SUBMAJOR: 6
-  VERSION_MINOR: 2
+  VERSION_MINOR: 3
 
 jobs:
   release-public:
