@@ -27,17 +27,45 @@ jobs:
       - name: Checkout (for openvex.json)
         uses: actions/checkout@v6
 
+      # Pre-pull each arch into the local docker daemon with retries. Trivy
+      # otherwise re-resolves the remote manifest on every scan step, so a
+      # single transient quay.io 5xx (e.g. run 26743161730 hit a 504) takes
+      # down the whole job. Pulling once with retry, tagging per-arch, and
+      # then pointing Trivy at the local tags eliminates the remote round-
+      # trips and gives us a survivable backoff window.
+      - name: Pull image per arch (with retries)
+        run: |
+          set -euo pipefail
+          pull_with_retry() {
+            local platform="$1" tag="$2" n=5 delay=20
+            for i in $(seq 1 $n); do
+              echo "::group::docker pull $platform (attempt $i/$n)"
+              if docker pull --platform "$platform" "$IMAGE"; then
+                docker tag "$IMAGE" "$tag"
+                echo "::endgroup::"
+                echo "✓ pulled $platform → $tag"
+                return 0
+              fi
+              echo "::endgroup::"
+              [ "$i" -lt "$n" ] && sleep "$delay"
+            done
+            echo "::error::Failed to pull $IMAGE for $platform after $n attempts"
+            return 1
+          }
+          pull_with_retry linux/amd64 scan-target:amd64
+          pull_with_retry linux/arm64 scan-target:arm64
+          docker image ls scan-target
+
       # OS-package scan, per arch — these are the CVEs a Wolfi rebuild can
       # actually fix, so this is the input to the rebuild-trigger decision.
-      # The action wrapper has no `vex` or `platform` inputs; both are
-      # passed via the Trivy CLI's TRIVY_<FLAG> env-var convention.
+      # The action wrapper has no `vex` input, so it's passed via the Trivy
+      # CLI's TRIVY_<FLAG> env-var convention.
       - name: Trivy — OS scan (linux/amd64)
         uses: aquasecurity/trivy-action@v0.36.0
         env:
           TRIVY_VEX: openvex.json
-          TRIVY_PLATFORM: linux/amd64
         with:
-          image-ref: ${{ env.IMAGE }}
+          image-ref: scan-target:amd64
           format: json
           output: trivy-os-amd64.json
           severity: HIGH,CRITICAL
@@ -49,9 +77,8 @@ jobs:
         uses: aquasecurity/trivy-action@v0.36.0
         env:
           TRIVY_VEX: openvex.json
-          TRIVY_PLATFORM: linux/arm64
         with:
-          image-ref: ${{ env.IMAGE }}
+          image-ref: scan-target:arm64
           format: json
           output: trivy-os-arm64.json
           severity: HIGH,CRITICAL
@@ -67,9 +94,8 @@ jobs:
         uses: aquasecurity/trivy-action@v0.36.0
         env:
           TRIVY_VEX: openvex.json
-          TRIVY_PLATFORM: linux/amd64
         with:
-          image-ref: ${{ env.IMAGE }}
+          image-ref: scan-target:amd64
           format: json
           output: trivy-libs.json
           severity: HIGH,CRITICAL
