@@ -38,6 +38,12 @@ FROM scratch AS host-m2
 # ---------------------------------------------------------------------------
 FROM --platform=$BUILDPLATFORM maven:3.9-eclipse-temurin-21 AS libs-builder
 
+# Git commit SHA injected at build time. The buildnumber-maven-plugin inside
+# libs/internal/pom.xml normally reads this from .git, but .git is not
+# available inside the Docker build context. Passing it here lets the
+# fizzed-versionizer plugin stamp the correct commit into the Version class.
+ARG GIT_COMMIT=unknown
+
 WORKDIR /build
 
 # Bring in just the poms first so dependency resolution layer can be cached
@@ -63,7 +69,8 @@ RUN --mount=type=cache,target=/root/.m2,sharing=locked \
         mkdir -p /root/.m2/repository && \
         cp -rf /host-m2/repository/. /root/.m2/repository/ 2>/dev/null || true; \
     fi && \
-    mvn -B -e --strict-checksums -ntp clean package -DskipTests
+    mvn -B -e --strict-checksums -ntp clean package -DskipTests \
+        -DbuildNumber="${GIT_COMMIT}"
 
 # ---------------------------------------------------------------------------
 # Stage 2: Keycloak builder. Stages the providers and runs `kc.sh build` so

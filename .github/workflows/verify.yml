@@ -23,6 +23,8 @@ jobs:
           context: .
           platforms: linux/amd64
           load: true
+          build-args: |
+            GIT_COMMIT=${{ github.sha }}
           tags: phasetwo-keycloak:pr
           cache-from: type=gha
           cache-to: type=gha,mode=max
