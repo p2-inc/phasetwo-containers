@@ -17,6 +17,8 @@ services:
   keycloak:
     build:
       context: .
+      args:
+        GIT_COMMIT: "${GIT_COMMIT:-unknown}"
       # Override `host-m2` to expose a host Maven repository to the libs
       # build stage (see Dockerfile). Default is an empty scratch image, so
       # CI builds behave the same as `FROM scratch AS host-m2` in the

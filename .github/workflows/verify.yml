@@ -15,6 +15,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
+      - name: Compute short commit SHA
+        run: echo "GIT_COMMIT=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
+
       # Build single-arch and load into the local daemon so Trivy can scan
       # the actual layers this PR would produce.
       - name: Build image
@@ -23,6 +26,8 @@ jobs:
           context: .
           platforms: linux/amd64
           load: true
+          build-args: |
+            GIT_COMMIT=${{ env.GIT_COMMIT }}
           tags: phasetwo-keycloak:pr
           cache-from: type=gha
           cache-to: type=gha,mode=max

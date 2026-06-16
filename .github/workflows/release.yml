@@ -38,12 +38,15 @@ jobs:
           echo "VERSION_MINOR=$VERSION_MINOR" >> $GITHUB_ENV
           echo "VERSION_TS=$TS" >> $GITHUB_ENV
           echo "VERSION_TAG=$VERSION_MAJOR.$VERSION_SUBMAJOR.$VERSION_MINOR.$TS" >> $GITHUB_ENV
+          echo "GIT_COMMIT=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
+          build-args: |
+            GIT_COMMIT=${{ env.GIT_COMMIT }}
           tags: |
             quay.io/phasetwo/phasetwo-keycloak:latest
             quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_MAJOR }}
