@@ -76,7 +76,7 @@ RUN --mount=type=cache,target=/root/.m2,sharing=locked \
 # Stage 2: Keycloak builder. Stages the providers and runs `kc.sh build` so
 # the runtime image can launch with `start --optimized` (no augmentation).
 # ---------------------------------------------------------------------------
-FROM quay.io/phasetwo/keycloak-crdb:26.6.3 AS keycloak-builder
+FROM quay.io/phasetwo/keycloak-crdb:26.6.4 AS keycloak-builder
 
 ENV KC_METRICS_ENABLED=true
 ENV KC_HEALTH_ENABLED=true
