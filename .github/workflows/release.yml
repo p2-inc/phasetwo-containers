@@ -8,6 +8,10 @@ on:
   # against a freshly patched Wolfi base when OS-package CVEs are detected.
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 env:
   # Version 26.6.4
   VERSION_MAJOR: 26
@@ -72,6 +76,42 @@ jobs:
         env:
           TAG: v${{ env.VERSION_TAG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Comments the released image tag back on the PR that this commit came
+      # from, so a version-bump PR shows exactly what it shipped as.
+      # Skipped on manual workflow_dispatch reruns (e.g. the daily CVE-patch
+      # rebuild), which aren't tied to a newly merged PR.
+      - name: Comment released version on originating PR
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          PR_NUMBER=$(gh api "repos/$REPO/commits/$COMMIT_SHA/pulls" --jq '.[0].number // empty')
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No PR associated with commit $COMMIT_SHA; skipping release comment."
+            exit 0
+          fi
+
+          MARKER="<!-- release-version-comment -->"
+          BODY="$MARKER
+          This shipped in \`$VERSION_TAG\`:
+
+          \`\`\`
+          quay.io/phasetwo/phasetwo-keycloak:$VERSION_TAG
+          \`\`\`"
+
+          EXISTING_ID=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" \
+            | jq -r --arg m "$MARKER" '.[] | select(.body | startswith($m)) | .id' | head -n1)
+
+          if [ -n "$EXISTING_ID" ]; then
+            gh api --method PATCH "repos/$REPO/issues/comments/$EXISTING_ID" -f body="$BODY"
+          else
+            gh api --method POST "repos/$REPO/issues/$PR_NUMBER/comments" -f body="$BODY"
+          fi
 
       # Post-release Trivy scan against the just-pushed image. This is a
       # record of what shipped — non-gating (the image is already public)

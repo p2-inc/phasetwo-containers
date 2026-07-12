@@ -1,0 +1,78 @@
+name: Post component PR digest
+
+# Runs in the base repo's context (full permissions, real secrets) after
+# component-pr-digest.yml finishes, regardless of whether that run came from
+# a fork. See https://github.com/orgs/community/discussions/25220 for why
+# this two-workflow split is the safe way to comment on fork PRs.
+on:
+  workflow_run:
+    workflows: ["Component PR digest"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pr-context:
+    name: Acquire PR context
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'pull_request' }}
+    outputs:
+      PR_NUMBER: ${{ steps.set-pr-context.outputs.number }}
+    steps:
+      - name: Get PR context
+        id: set-pr-context
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_TARGET_REPO: ${{ github.repository }}
+          PR_BRANCH: |-
+            ${{
+              (github.event.workflow_run.head_repository.owner.login != github.event.workflow_run.repository.owner.login)
+                && format('{0}:{1}', github.event.workflow_run.head_repository.owner.login, github.event.workflow_run.head_branch)
+                || github.event.workflow_run.head_branch
+            }}
+        run: |
+          gh pr view --repo "${PR_TARGET_REPO}" "${PR_BRANCH}" \
+            --json number \
+            --jq '"number=\(.number)"' \
+            >> "$GITHUB_OUTPUT"
+
+  comment:
+    name: Comment component digest on PR
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    needs: [pr-context]
+    steps:
+      - name: Download digest artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: component-pr-digest
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ github.workspace }}/digest
+
+      - name: Comment on PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ needs.pr-context.outputs.PR_NUMBER }}
+        run: |
+          set -euo pipefail
+
+          BODY="$(cat "$GITHUB_WORKSPACE/digest/digest.md")"
+          if [ "$BODY" = "NO_CHANGES" ]; then
+            echo "No tracked component changes in this PR; nothing to comment."
+            exit 0
+          fi
+
+          MARKER="<!-- component-pr-digest -->"
+          EXISTING_ID=$(gh api "repos/$REPO/issues/$PR_NUMBER/comments" \
+            | jq -r --arg m "$MARKER" '.[] | select(.body | startswith($m)) | .id' | head -n1)
+
+          if [ -n "$EXISTING_ID" ]; then
+            gh api --method PATCH "repos/$REPO/issues/comments/$EXISTING_ID" -f body="$BODY"
+          else
+            gh api --method POST "repos/$REPO/issues/$PR_NUMBER/comments" -f body="$BODY"
+          fi

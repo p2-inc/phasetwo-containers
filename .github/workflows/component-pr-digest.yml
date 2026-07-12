@@ -1,0 +1,59 @@
+name: Component PR digest
+
+# Only computes the digest and uploads it as an artifact -- it never talks to
+# the PR itself. This is what makes it safe to run on PRs from forks: GitHub
+# forces GITHUB_TOKEN to be read-only for pull_request events from a fork, so
+# any attempt to comment here would just fail. Posting the comment is the job
+# of component-pr-digest-post.yml, which runs via workflow_run in the base
+# repo's context and has write access.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+    paths:
+      - libs/pom.xml
+
+permissions:
+  contents: read
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Extract old and new libs/pom.xml
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api "repos/${{ github.repository }}/contents/libs/pom.xml?ref=${{ github.event.pull_request.base.sha }}" --jq .content | base64 -d > /tmp/old-pom.xml
+          gh api "repos/${{ github.repository }}/contents/libs/pom.xml?ref=${{ github.event.pull_request.head.sha }}" --jq .content | base64 -d > /tmp/new-pom.xml
+
+      - name: Install jbang
+        run: |
+          curl -Ls https://sh.jbang.dev | bash -s - app setup
+          echo "$HOME/.jbang/bin" >> "$GITHUB_PATH"
+
+      - name: Cache jbang dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.jbang
+          key: ${{ runner.os }}-jbang-component-digest
+
+      - name: Build component digest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          jbang .github/scripts/ComponentDigest.java \
+            /tmp/old-pom.xml /tmp/new-pom.xml \
+            ${{ github.repository }} \
+            ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} \
+            > digest.md
+
+      - name: Upload digest artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: component-pr-digest
+          path: digest.md
+          retention-days: 7
