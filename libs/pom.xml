@@ -38,7 +38,7 @@
     <keycloak.version>26.6.4</keycloak.version>
     <keycloak-events.version>0.62</keycloak-events.version>
     <keycloak-magic-link.version>0.72</keycloak-magic-link.version>
-    <keycloak-orgs.version>0.168</keycloak-orgs.version>
+    <keycloak-orgs.version>0.169</keycloak-orgs.version>
     <keycloak-scim-server.version>1.6.0.6</keycloak-scim-server.version>
     <keycloak-themes.version>0.69</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.59</phasetwo-admin-portal.version>
