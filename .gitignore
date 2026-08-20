@@ -7,3 +7,4 @@
 .quarkus/
 target
 .DS_Store
+.keycloak-build/

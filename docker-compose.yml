@@ -28,8 +28,14 @@ services:
       # Note: BuildKit transfers the entire HOST_M2 directory before
       # running the build, so for large repos prefer staging a small subset
       # (e.g. just io/phasetwo/).
+      # `keycloak` carries the server distribution and org.keycloak artifacts
+      # built from source by scripts/build-keycloak.sh — run that first, since
+      # the Keycloak versions this image tracks are not published to Maven
+      # Central or quay.io. Override KEYCLOAK_CONTEXT if you staged it
+      # elsewhere (e.g. `scripts/build-keycloak.sh -o /tmp/kc`).
       additional_contexts:
         - "host-m2=${HOST_M2:-docker-image://scratch}"
+        - "keycloak=${KEYCLOAK_CONTEXT:-./.keycloak-build/out}"
     environment:
       KC_DB: cockroach
       KC_HTTP_RELATIVE_PATH: /auth

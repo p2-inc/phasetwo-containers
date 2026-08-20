@@ -1,0 +1,64 @@
+name: 'Keycloak artifacts'
+description: >-
+  Builds the CockroachDB-patched Keycloak server distribution and its Maven
+  artifacts from source (or restores them from cache) and stages them for
+  `docker build --build-context keycloak=<path>`.
+
+  Keycloak tags patch releases without publishing jars to Maven Central or
+  images to quay.io, so neither `libs/` nor the Dockerfile has anything to
+  build against until this has run.
+
+outputs:
+  context-path:
+    description: 'Path to pass as the `keycloak` named build context'
+    value: ${{ steps.stage.outputs.path }}
+  version:
+    description: 'Keycloak version that was built, from libs/pom.xml'
+    value: ${{ steps.resolve.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    # libs/pom.xml is the single source of truth for the Keycloak version. The
+    # branch head sha is resolved without cloning so it can key the cache: a
+    # given (version, sha) pair always produces identical artifacts, so a hit
+    # means the build below is a no-op.
+    - id: resolve
+      shell: bash
+      run: |
+        set -euo pipefail
+        version=$(sed -n 's|.*<keycloak\.version>\(.*\)</keycloak\.version>.*|\1|p' libs/pom.xml | head -1)
+        if [ -z "$version" ]; then
+          echo "::error file=libs/pom.xml::could not read <keycloak.version>"
+          exit 1
+        fi
+        sha=$(git ls-remote --heads https://github.com/p2-inc/keycloak "refs/heads/${version}_crdb" | cut -f1)
+        if [ -z "$sha" ]; then
+          echo "::error file=libs/pom.xml::no branch ${version}_crdb in p2-inc/keycloak — push the CRDB branch for this tag first"
+          exit 1
+        fi
+        echo "version=$version" >> "$GITHUB_OUTPUT"
+        echo "sha=$sha" >> "$GITHUB_OUTPUT"
+        echo "Keycloak $version from ${version}_crdb @ ${sha:0:8}"
+
+    # Only the staged export is cached — the ~1GB source checkout is not worth
+    # carrying, and a cache hit lets the script seed ~/.m2 from the export
+    # instead of rebuilding.
+    - id: cache
+      uses: actions/cache@v4
+      with:
+        path: .keycloak-build/out
+        key: keycloak-${{ steps.resolve.outputs.version }}-${{ steps.resolve.outputs.sha }}
+
+    - id: stage
+      shell: bash
+      run: |
+        set -euo pipefail
+        # Keycloak 26.x builds on JDK 21; the runner's default java may be older.
+        if [ -n "${JAVA_HOME_21_X64:-}" ]; then
+          export JAVA_HOME="$JAVA_HOME_21_X64"
+        elif [ -n "${JAVA_HOME_21_ARM64:-}" ]; then
+          export JAVA_HOME="$JAVA_HOME_21_ARM64"
+        fi
+        ./scripts/build-keycloak.sh "${{ steps.resolve.outputs.version }}"
+        echo "path=.keycloak-build/out" >> "$GITHUB_OUTPUT"

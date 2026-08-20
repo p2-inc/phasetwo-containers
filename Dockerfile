@@ -24,6 +24,29 @@
 FROM scratch AS host-m2
 
 # ---------------------------------------------------------------------------
+# Default named context for the Keycloak server distribution and its Maven
+# artifacts, built from source by scripts/build-keycloak.sh.
+#
+# Keycloak tags patch releases without publishing jars to Maven Central or
+# images to quay.io (26.6.5 and 26.6.6, for example), so there is no base image
+# to start `FROM` and no `org.keycloak:*` jars for libs/ to compile against.
+# Both come out of a source build of p2-inc/keycloak branch `<version>_crdb`:
+#
+#     scripts/build-keycloak.sh
+#     docker buildx build --build-context keycloak=.keycloak-build/out .
+#
+# The context is expected to contain:
+#
+#     dist/keycloak-<version>.tar.gz          the server distribution
+#     dist/cockroachdb-jdbc-driver-*.jar      CRDB driver, carried by the fork
+#     m2/repository/org/keycloak/**           artifacts libs/ compiles against
+#
+# Leaving it empty is a hard error rather than a silent fall back to Central,
+# so a stale image can never be built against the wrong Keycloak.
+# ---------------------------------------------------------------------------
+FROM scratch AS keycloak
+
+# ---------------------------------------------------------------------------
 # Stage 1: build the extension/provider jars from libs/ with Maven.
 #
 # Runs on the native BUILDPLATFORM (jars are architecture-independent) so
@@ -54,8 +77,12 @@ COPY libs/bundle/pom.xml ./bundle/pom.xml
 
 RUN --mount=type=cache,target=/root/.m2,sharing=locked \
     --mount=type=bind,from=host-m2,target=/host-m2,readonly \
+    --mount=type=bind,from=keycloak,target=/kc,readonly \
+    mkdir -p /root/.m2/repository && \
+    if [ -d /kc/m2/repository ]; then \
+        cp -rf /kc/m2/repository/. /root/.m2/repository/; \
+    fi && \
     if [ -d /host-m2/repository ]; then \
-        mkdir -p /root/.m2/repository && \
         cp -rf /host-m2/repository/. /root/.m2/repository/ 2>/dev/null || true; \
     fi && \
     mvn -B -e --strict-checksums -ntp \
@@ -65,18 +92,52 @@ COPY libs/ ./
 
 RUN --mount=type=cache,target=/root/.m2,sharing=locked \
     --mount=type=bind,from=host-m2,target=/host-m2,readonly \
+    --mount=type=bind,from=keycloak,target=/kc,readonly \
+    if [ ! -d /kc/m2/repository/org/keycloak ]; then \
+        echo "ERROR: the 'keycloak' build context has no org.keycloak artifacts." >&2; \
+        echo "Run scripts/build-keycloak.sh, then pass:" >&2; \
+        echo "  --build-context keycloak=.keycloak-build/out" >&2; \
+        exit 1; \
+    fi && \
+    mkdir -p /root/.m2/repository && \
+    cp -rf /kc/m2/repository/. /root/.m2/repository/ && \
     if [ -d /host-m2/repository ]; then \
-        mkdir -p /root/.m2/repository && \
         cp -rf /host-m2/repository/. /root/.m2/repository/ 2>/dev/null || true; \
     fi && \
     mvn -B -e --strict-checksums -ntp clean package -DskipTests \
         -DbuildNumber="${GIT_COMMIT}"
 
 # ---------------------------------------------------------------------------
-# Stage 2: Keycloak builder. Stages the providers and runs `kc.sh build` so
-# the runtime image can launch with `start --optimized` (no augmentation).
+# Stage 2: Keycloak builder. Unpacks the source-built server distribution,
+# stages the providers, and runs `kc.sh build` so the runtime image can launch
+# with `start --optimized` (no augmentation).
+#
+# This used to start `FROM quay.io/phasetwo/keycloak-crdb:<version>`, which
+# only works for versions that were actually imaged. Unpacking the tarball
+# produced by scripts/build-keycloak.sh instead means any tagged Keycloak can
+# be built, and drops the UBI9-micro intermediary from the critical path — the
+# runtime image (stage 3) is Wolfi and never used anything else from it.
 # ---------------------------------------------------------------------------
-FROM quay.io/phasetwo/keycloak-crdb:26.6.4 AS keycloak-builder
+FROM eclipse-temurin:21-jdk AS keycloak-builder
+
+# `kc.sh build` needs a JDK, tar and bash; the base image supplies all three.
+RUN --mount=type=bind,from=keycloak,target=/kc,readonly \
+    set -eu; \
+    tarball=$(ls /kc/dist/keycloak-*.tar.gz 2>/dev/null | head -1); \
+    if [ -z "$tarball" ]; then \
+        echo "ERROR: no keycloak-*.tar.gz in the 'keycloak' build context." >&2; \
+        echo "Run scripts/build-keycloak.sh, then pass:" >&2; \
+        echo "  --build-context keycloak=.keycloak-build/out" >&2; \
+        exit 1; \
+    fi; \
+    tar -xzf "$tarball" -C /opt; \
+    mv /opt/keycloak-* /opt/keycloak; \
+    mkdir -p /opt/keycloak/data; \
+    for j in /kc/dist/cockroachdb-jdbc-driver-*.jar; do \
+        [ -f "$j" ] || continue; \
+        cp "$j" "/opt/keycloak/providers/io.cockroachdb.jdbc.$(basename "$j")"; \
+    done; \
+    chmod -R g+rwX /opt/keycloak
 
 ENV KC_METRICS_ENABLED=true
 ENV KC_HEALTH_ENABLED=true

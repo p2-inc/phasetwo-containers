@@ -18,6 +18,13 @@ jobs:
       - name: Compute short commit SHA
         run: echo "GIT_COMMIT=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
 
+      # Keycloak must be built from source before libs/ or the image can be
+      # built: the tags we track are not published to Central or quay. Cached
+      # on the CRDB branch head, so only a version bump pays the build cost.
+      - name: Build Keycloak from source
+        id: keycloak
+        uses: ./.github/actions/keycloak-artifacts
+
       # Build single-arch and load into the local daemon so Trivy can scan
       # the actual layers this PR would produce.
       - name: Build image
@@ -28,6 +35,8 @@ jobs:
           load: true
           build-args: |
             GIT_COMMIT=${{ env.GIT_COMMIT }}
+          build-contexts: |
+            keycloak=${{ steps.keycloak.outputs.context-path }}
           tags: phasetwo-keycloak:pr
           cache-from: type=gha
           cache-to: type=gha,mode=max

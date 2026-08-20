@@ -13,10 +13,10 @@ permissions:
   pull-requests: write
 
 env:
-  # Version 26.6.4
+  # Version 26.6.5
   VERSION_MAJOR: 26
   VERSION_SUBMAJOR: 6
-  VERSION_MINOR: 4
+  VERSION_MINOR: 5
 
 jobs:
   release-public:
@@ -43,6 +43,14 @@ jobs:
           echo "VERSION_TS=$TS" >> $GITHUB_ENV
           echo "VERSION_TAG=$VERSION_MAJOR.$VERSION_SUBMAJOR.$VERSION_MINOR.$TS" >> $GITHUB_ENV
           echo "GIT_COMMIT=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
+
+      # Keycloak must be built from source before libs/ or the image can be
+      # built: the tags we track are not published to Central or quay. Cached
+      # on the CRDB branch head, so only a version bump pays the build cost.
+      - name: Build Keycloak from source
+        id: keycloak
+        uses: ./.github/actions/keycloak-artifacts
+
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
@@ -51,6 +59,8 @@ jobs:
           push: true
           build-args: |
             GIT_COMMIT=${{ env.GIT_COMMIT }}
+          build-contexts: |
+            keycloak=${{ steps.keycloak.outputs.context-path }}
           tags: |
             quay.io/phasetwo/phasetwo-keycloak:latest
             quay.io/phasetwo/phasetwo-keycloak:${{ env.VERSION_MAJOR }}
