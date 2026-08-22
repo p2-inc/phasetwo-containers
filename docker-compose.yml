@@ -62,6 +62,7 @@ services:
       KC_PROXY_HEADERS: 'xforwarded'
       KC_SPI_EVENTS_STORE_PROVIDER: ext-event-mdc-logger-store
       KC_SPI_EVENTS_STORE_EXT_EVENT_MDC_LOGGER_STORE_USE_JPA: 'true'
+      EXT_EVENT_MDC_LOGGER_ENABLED: 'true'
       KC_TRANSACTION_JTA_ENABLED: 'false'
       KC_TRANSACTION_XA_ENABLED: 'false'
     ports:
