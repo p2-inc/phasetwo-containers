@@ -4,6 +4,18 @@ on:
   pull_request:
 
 jobs:
+  # Fast, hermetic tests for the Keycloak source-build script — no Docker, no
+  # Maven, no network. Runs alongside the image build rather than gating it, so
+  # a broken script and a broken image are reported in the same pass.
+  test-build-script:
+    name: 'Test build-keycloak.sh'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Run test suite
+        run: ./scripts/test-build-keycloak.sh
+
   verify-docker-build:
     name: 'Verify docker build'
     runs-on: ubuntu-latest

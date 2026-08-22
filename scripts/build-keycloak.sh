@@ -244,10 +244,17 @@ hydrate_from_export() {
 
 if [ "$FORCE" != "1" ] && [ -f "$STAMP" ] && [ "$(cat "$STAMP")" = "$REMOTE_SHA" ]; then
     if jars_installed; then
-        log "Keycloak $VERSION ($BRANCH @ ${REMOTE_SHA:0:8}) already installed in $MAVEN_REPO_LOCAL"
         ensure_export
-        log "nothing to do; re-run with --force to rebuild"
-        exit 0
+        if export_present; then
+            log "Keycloak $VERSION ($BRANCH @ ${REMOTE_SHA:0:8}) already installed in $MAVEN_REPO_LOCAL"
+            log "nothing to do; re-run with --force to rebuild"
+            exit 0
+        fi
+        # Installed, but the staged context cannot be reassembled: it was
+        # cleared, or a build for another version wiped it and moved the source
+        # tree to that branch. Reporting success here would leave the image
+        # build to fail on a missing context, so fall through and rebuild.
+        warn "the staged build context in $KEYCLOAK_OUT is incomplete; rebuilding"
     elif export_present; then
         hydrate_from_export
         jars_installed || die "export at $KEYCLOAK_OUT is incomplete; re-run with --force"
