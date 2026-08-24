@@ -81,6 +81,18 @@ In CI this is the `.github/actions/keycloak-artifacts` composite action, which
 wraps the same script in an `actions/cache` keyed on the CRDB branch head —
 only a Keycloak version bump pays the build cost.
 
+The script has its own test suite:
+
+```bash
+scripts/test-build-keycloak.sh        # ~8s; -v to dump output for failures
+```
+
+It runs the real script against a fake upstream git repository whose `mvnw` is
+a stub, so branch resolution, cloning, fetching, staging, the stamp, the
+cache-restore path, the JDK search and every error path are exercised in
+seconds without a Keycloak build. It touches nothing outside a temp dir — not
+your `~/.m2`, not `.keycloak-build/`. CI runs it on every PR.
+
 #### Equivalence with the `keycloak-crdb` image
 
 Stage 2 used to start `FROM quay.io/phasetwo/keycloak-crdb`, whose own
