@@ -57,6 +57,13 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
+          # Attach a CycloneDX SBOM and SLSA provenance to the pushed image.
+          # BuildKit generates these from the final image, so they cover the
+          # prebuilt jars in libs/ext/ and the Wolfi base packages -- neither of
+          # which appears in libs/pom.xml. Retrievable per digest with
+          # `docker buildx imagetools inspect --format '{{ json .SBOM }}' <ref>`.
+          sbom: true
+          provenance: true
           build-args: |
             GIT_COMMIT=${{ env.GIT_COMMIT }}
           build-contexts: |
@@ -75,6 +82,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           pull: true
           push: true
+          sbom: true
+          provenance: true
           tags: |
             quay.io/phasetwo/phasetwo-cluster:latest
             quay.io/phasetwo/phasetwo-cluster:${{ env.VERSION_MAJOR }}
