@@ -11,7 +11,7 @@ This distribution contains the following extensions:
 | Component               | Status             | Repository                                                    | Description                                                                               |
 | ----------------------- | ------------------ | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | Admin Portal            | :white_check_mark: | https://github.com/p2-inc/phasetwo-admin-portal               | User self-management for their account and organizations.                                 |
-| Admin UI                | :white_check_mark: | https://github.com/p2-inc/keycloak                            | Admin UI customizations.                                                                  |
+| Admin UI                | :white_check_mark: | https://github.com/p2-inc/keycloak-themes                     | Admin UI customization are distributed through the phasetwo-ui theme.                     |
 | Events                  | :white_check_mark: | https://github.com/p2-inc/keycloak-events                     | All event listener implementations.                                                       |
 | IdP Wizards             | :white_check_mark: | https://github.com/p2-inc/idp-wizard                          | Identity Provider setup wizards for self-management of SSO admins and organizations.      |
 | Magic Link              | :white_check_mark: | https://github.com/p2-inc/keycloak-magic-link                 | Magic Link Authentication. Created with an Authenticator or Resource.                     |
