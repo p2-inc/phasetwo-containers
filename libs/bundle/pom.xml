@@ -33,6 +33,11 @@
     </dependency>
     <dependency>
       <groupId>io.phasetwo.keycloak</groupId>
+      <artifactId>keycloak-atomic-auth-flows</artifactId>
+      <version>${keycloak-atomic.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.phasetwo.keycloak</groupId>
       <artifactId>keycloak-events</artifactId>
       <version>${keycloak-events.version}</version>
     </dependency>
