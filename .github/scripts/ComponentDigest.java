@@ -44,6 +44,7 @@ public class ComponentDigest {
   // repo are expected to be "v<version>". Unknown properties are ignored.
   static final Map<String, String> COMPONENT_REPOS =
       Map.ofEntries(
+          Map.entry("keycloak-atomic.version", "p2-inc/keycloak-atomic-auth-flows"),
           Map.entry("keycloak-events.version", "p2-inc/keycloak-events"),
           Map.entry("keycloak-magic-link.version", "p2-inc/keycloak-magic-link"),
           Map.entry("keycloak-orgs.version", "p2-inc/keycloak-orgs"),
