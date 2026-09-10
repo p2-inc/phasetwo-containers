@@ -59,7 +59,7 @@ FROM scratch AS keycloak
 # (essential for iterating on a SNAPSHOT: `cp -rn` would leave a stale
 # previous build of the SNAPSHOT in the cache forever).
 # ---------------------------------------------------------------------------
-FROM --platform=$BUILDPLATFORM maven:3.9-eclipse-temurin-21 AS libs-builder
+FROM --platform=$BUILDPLATFORM docker.io/library/maven:3.9-eclipse-temurin-21 AS libs-builder
 
 # Git commit SHA injected at build time. The buildnumber-maven-plugin inside
 # libs/internal/pom.xml normally reads this from .git, but .git is not
@@ -118,7 +118,7 @@ RUN --mount=type=cache,target=/root/.m2,sharing=locked \
 # be built, and drops the UBI9-micro intermediary from the critical path — the
 # runtime image (stage 3) is Wolfi and never used anything else from it.
 # ---------------------------------------------------------------------------
-FROM eclipse-temurin:21-jdk AS keycloak-builder
+FROM docker.io/library/eclipse-temurin:21-jdk AS keycloak-builder
 
 # `kc.sh build` needs a JDK, tar and bash; the base image supplies all three.
 RUN --mount=type=bind,from=keycloak,target=/kc,readonly \

@@ -8,7 +8,7 @@ volumes:
 
 services:
   cockroach:
-    image: cockroachdb/cockroach:v23.2.23
+    image: docker.io/cockroachdb/cockroach:v23.2.23
     volumes:
       - cockroach_data:/cockroach/cockroach-data
     command: start-single-node --insecure
@@ -52,13 +52,13 @@ services:
       KC_DB_USERNAME: root
       KC_FEATURES: persistent-user-sessions
       KC_FEATURES_DISABLED: organization
-      KC_HEALTH_ENABLED: true
+      KC_HEALTH_ENABLED: 'true'
       KC_HOSTNAME_STRICT: 'false'
       KC_HTTP_ENABLED: 'true'
       KC_HTTP_MANAGEMENT_PORT: 9000
       KC_ISPN_DB_VENDOR: cockroachdb
       KC_LOG_LEVEL: "INFO,io.phasetwo:DEBUG,org.keycloak.connections.infinispan.DefaultInfinispanConnectionProviderFactory:DEBUG,fi.metatavu.keycloak.scim.server:DEBUG"
-      KC_METRICS_ENABLED: true
+      KC_METRICS_ENABLED: 'true'
       KC_PROXY_HEADERS: 'xforwarded'
       KC_SPI_EVENTS_STORE_PROVIDER: ext-event-mdc-logger-store
       KC_SPI_EVENTS_STORE_EXT_EVENT_MDC_LOGGER_STORE_USE_JPA: 'true'
@@ -73,7 +73,7 @@ services:
       - cockroach
     entrypoint: /opt/keycloak/bin/kc.sh --verbose start --spi-email-template-provider=freemarker-plus-mustache --spi-email-template-freemarker-plus-mustache-enabled=true --spi-theme-cache-themes=false
   caddy:
-    image: caddy:2-alpine
+    image: docker.io/library/caddy:2-alpine
     restart: unless-stopped
     command: caddy reverse-proxy --from ${CADDY_FROM:-:80} --to http://keycloak:8080
     # Caddy is opt-in via `docker compose --profile public-proxy up` so that
