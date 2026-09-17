@@ -13,10 +13,10 @@ permissions:
   pull-requests: write
 
 env:
-  # Version 26.6.6
+  # Version 26.6.7
   VERSION_MAJOR: 26
   VERSION_SUBMAJOR: 6
-  VERSION_MINOR: 6
+  VERSION_MINOR: 7
 
 jobs:
   release-public:
