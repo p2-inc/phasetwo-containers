@@ -41,7 +41,7 @@
     <keycloak-magic-link.version>0.75</keycloak-magic-link.version>
     <keycloak-orgs.version>0.180</keycloak-orgs.version>
     <keycloak-scim-server.version>1.7.0.1</keycloak-scim-server.version>
-    <keycloak-themes.version>0.77</keycloak-themes.version>
+    <keycloak-themes.version>0.79</keycloak-themes.version>
     <phasetwo-admin-portal.version>0.60</phasetwo-admin-portal.version>
     <phasetwo-idp-wizard.version>0.56</phasetwo-idp-wizard.version>
     <auto-service.version>1.1.1</auto-service.version>
