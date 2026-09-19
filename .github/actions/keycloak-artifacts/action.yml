@@ -45,7 +45,7 @@ runs:
     # carrying, and a cache hit lets the script seed ~/.m2 from the export
     # instead of rebuilding.
     - id: cache
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: .keycloak-build/out
         key: keycloak-${{ steps.resolve.outputs.version }}-${{ steps.resolve.outputs.sha }}
