@@ -36,7 +36,7 @@ jobs:
           echo "$HOME/.jbang/bin" >> "$GITHUB_PATH"
 
       - name: Cache jbang dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.jbang
           key: ${{ runner.os }}-jbang-component-digest
