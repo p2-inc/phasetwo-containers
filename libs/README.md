@@ -14,7 +14,6 @@ This maven project has two functions:
 - keycloak-themes
 - phasetwo-admin-portal
 - phasetwo-idp-wizard
-- phasetwo-admin-ui
 
 ### 3rd Party
 
