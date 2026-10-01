@@ -30,6 +30,62 @@ jobs:
       - name: Compute short commit SHA
         run: echo "GIT_COMMIT=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
 
+      # Every Keycloak port lands here as a version bump whose extension
+      # releases have not been published yet, and the resulting failure is a
+      # Maven dependency error ~8 minutes in, buried in buildx output. Check it
+      # up front instead: same gate, named artifacts, two seconds.
+      - name: Check extension releases are published
+        run: |
+          python3 - <<'EOF'
+          import re, sys, urllib.request, xml.etree.ElementTree as ET
+
+          NS = {'m': 'http://maven.apache.org/POM/4.0.0'}
+          props = ET.parse('libs/pom.xml').getroot().find('m:properties', NS)
+          props = {re.sub(r'\{.*\}', '', e.tag): (e.text or '').strip() for e in props}
+
+          missing, snapshots = [], []
+          for dep in ET.parse('libs/bundle/pom.xml').getroot().iter(
+                  '{http://maven.apache.org/POM/4.0.0}dependency'):
+              g = dep.findtext('m:groupId', '', NS)
+              a = dep.findtext('m:artifactId', '', NS)
+              v = dep.findtext('m:version', '', NS)
+              if not g.startswith('io.phasetwo'):
+                  continue
+              m = re.fullmatch(r'\$\{(.+)\}', v)
+              v = props.get(m.group(1), v) if m else v
+              if v.endswith('SNAPSHOT'):
+                  # Fine locally (the host-m2 build context supplies them), but
+                  # a SNAPSHOT must never reach a merged image build.
+                  print('  SNAPSHOT %s:%s:%s' % (g, a, v))
+                  snapshots.append('%s:%s:%s' % (g, a, v))
+                  continue
+              if '${' in v:
+                  continue
+              url = ('https://repo1.maven.org/maven2/%s/%s/%s/%s-%s.pom'
+                     % (g.replace('.', '/'), a, v, a, v))
+              try:
+                  urllib.request.urlopen(url, timeout=30).close()
+                  print('  ok       %s:%s:%s' % (g, a, v))
+              except Exception:
+                  print('  MISSING  %s:%s:%s' % (g, a, v))
+                  missing.append('%s:%s:%s' % (g, a, v))
+
+          if snapshots:
+              print('\n::error::SNAPSHOT versions committed: '
+                    + ', '.join(snapshots))
+              print('Pin released versions before merging. SNAPSHOTs are for '
+                    'local builds via --build-context host-m2=$HOME/.m2.')
+
+          if missing:
+              print('\n::error::Not yet on Maven Central: ' + ', '.join(missing))
+              print('The extension PRs for this bump must merge and release '
+                    'before this one can build. Nothing to fix here -- re-run '
+                    'once the releases are published.')
+
+          if missing or snapshots:
+              sys.exit(1)
+          EOF
+
       # Keycloak must be built from source before libs/ or the image can be
       # built: the tags we track are not published to Central or quay. Cached
       # on the CRDB branch head, so only a version bump pays the build cost.
@@ -40,6 +96,7 @@ jobs:
       # Build single-arch and load into the local daemon so Trivy can scan
       # the actual layers this PR would produce.
       - name: Build image
+        id: build
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -70,7 +127,7 @@ jobs:
           exit-code: '0'
 
       - name: Trivy — scan PR image (JSON for artifact)
-        if: always()
+        if: steps.build.outcome == 'success'
         uses: aquasecurity/trivy-action@v0.36.0
         env:
           TRIVY_VEX: openvex.json
@@ -83,7 +140,7 @@ jobs:
           exit-code: '0'
 
       - name: Upload Trivy PR report
-        if: always()
+        if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v7
         with:
           name: trivy-pr-${{ github.event.pull_request.number }}
