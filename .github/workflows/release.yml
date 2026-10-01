@@ -12,12 +12,6 @@ permissions:
   contents: write
   pull-requests: write
 
-env:
-  # Version 26.6.7
-  VERSION_MAJOR: 26
-  VERSION_SUBMAJOR: 6
-  VERSION_MINOR: 7
-
 jobs:
   release-public:
     runs-on: ubuntu-latest
@@ -34,15 +28,37 @@ jobs:
           registry: quay.io
           username: ${{ secrets.QUAY_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+      # The image tag is derived from <keycloak.version> in libs/pom.xml, the same
+      # single source of truth that scripts/build-keycloak.sh and
+      # .github/actions/keycloak-artifacts already read. These three components
+      # used to be hardcoded in this workflow's `env:` block, which made it a
+      # second place to remember on a Keycloak bump -- and when it was missed, a
+      # 26.8.0 image was published as 26.6.7, overwriting the `26.6.7`, `26.6`,
+      # `26` and `latest` tags with content from a different Keycloak minor.
       - name: Version
         run: |
+          set -euo pipefail
+          version=$(sed -n 's|.*<keycloak\.version>\(.*\)</keycloak\.version>.*|\1|p' libs/pom.xml | head -1)
+          if [ -z "$version" ]; then
+            echo "::error file=libs/pom.xml::could not read <keycloak.version>"
+            exit 1
+          fi
+          # Refuse anything that is not a plain three-part version: the tags below
+          # are public and effectively permanent, so a malformed one is not
+          # something to discover after the push.
+          if ! printf '%s' "$version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error file=libs/pom.xml::<keycloak.version> '$version' is not MAJOR.MINOR.PATCH"
+            exit 1
+          fi
           TS=$(date +%s)
-          echo "VERSION_MAJOR=$VERSION_MAJOR" >> $GITHUB_ENV
-          echo "VERSION_SUBMAJOR=$VERSION_SUBMAJOR" >> $GITHUB_ENV
-          echo "VERSION_MINOR=$VERSION_MINOR" >> $GITHUB_ENV
+          echo "VERSION_MAJOR=${version%%.*}" >> $GITHUB_ENV
+          echo "VERSION_SUBMAJOR=$(printf '%s' "$version" | cut -d. -f2)" >> $GITHUB_ENV
+          echo "VERSION_MINOR=${version##*.}" >> $GITHUB_ENV
           echo "VERSION_TS=$TS" >> $GITHUB_ENV
-          echo "VERSION_TAG=$VERSION_MAJOR.$VERSION_SUBMAJOR.$VERSION_MINOR.$TS" >> $GITHUB_ENV
+          echo "VERSION_TAG=$version.$TS" >> $GITHUB_ENV
           echo "GIT_COMMIT=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
+          echo "Releasing Keycloak $version as $version.$TS"
+
 
       # Keycloak must be built from source before libs/ or the image can be
       # built: the tags we track are not published to Central or quay. Cached
