@@ -1,0 +1,69 @@
+name: 'Publish quay description'
+
+# The quay.io repository page is editable in the Quay UI, which means it drifts
+# from the image it describes with nothing to flag it. quay-description.md is the
+# source of truth instead, and this pushes it on every change.
+#
+# Needs a QUAY_API_TOKEN secret: a Quay OAuth 2 access token with `repo:write`
+# on the phasetwo namespace. This is NOT the robot token used for `docker login`
+# -- registry credentials do not authorise the REST API, which is why the page
+# cannot be updated from the release job's existing secrets.
+#
+#   Quay -> phasetwo org -> Applications -> (app) -> Generate Token -> repo:write
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'quay-description.md'
+      - '.github/workflows/quay-description.yml'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: 'Push quay-description.md to quay.io'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Publish
+        env:
+          QUAY_API_TOKEN: ${{ secrets.QUAY_API_TOKEN }}
+          REPO: phasetwo/phasetwo-keycloak
+        run: |
+          set -euo pipefail
+
+          if [ -z "${QUAY_API_TOKEN:-}" ]; then
+            echo "::error::QUAY_API_TOKEN is not set; see the comment at the top of this workflow"
+            exit 1
+          fi
+
+          # jq -Rs builds the JSON string, so backticks, quotes and newlines in
+          # the markdown cannot break out of the payload.
+          payload=$(jq -Rs '{description: .}' < quay-description.md)
+
+          code=$(curl -sS -o /tmp/resp.json -w '%{http_code}' \
+            -X PUT "https://quay.io/api/v1/repository/${REPO}" \
+            -H "Authorization: Bearer ${QUAY_API_TOKEN}" \
+            -H 'Content-Type: application/json' \
+            -d "$payload")
+
+          if [ "$code" != "200" ]; then
+            echo "::error::quay returned HTTP $code"
+            cat /tmp/resp.json
+            exit 1
+          fi
+
+          # Read it back rather than trusting the 200: confirm quay stored what we sent.
+          curl -sS "https://quay.io/api/v1/repository/${REPO}?includeTags=false" \
+            | jq -r '.description' > /tmp/live.md
+
+          if diff -q quay-description.md /tmp/live.md >/dev/null; then
+            echo "Published and verified: $(wc -c < quay-description.md) bytes"
+          else
+            echo "::error::quay accepted the update but the stored description differs"
+            diff quay-description.md /tmp/live.md | head -20
+            exit 1
+          fi
