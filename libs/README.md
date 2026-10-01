@@ -14,7 +14,6 @@ This maven project has two functions:
 - keycloak-themes
 - phasetwo-admin-portal
 - phasetwo-idp-wizard
-- phasetwo-admin-ui
 
 ### 3rd Party
 
@@ -24,6 +23,28 @@ This maven project has two functions:
 
 - wildfly-client-config
 - dnsjava
+
+## Removed
+
+### phasetwo-admin-ui
+
+`libs/ext/phasetwo-admin-ui-<version>.jar` was a prebuilt fork of Keycloak's Admin
+UI, registering the `phasetwo.v2` admin theme and overriding the built-in
+`keycloak.v2`. **It is no longer included.**
+
+The admin theme in [keycloak-themes](https://github.com/p2-inc/keycloak-themes)
+supersedes it: that project builds the admin console from source as part of its
+normal release, and ships it as the `phasetwo-ui` theme (which also covers
+`account`, `email` and `login`).
+
+The prebuilt jar was pinned to a Keycloak 26.4 base and had to be rebuilt by hand
+for every server bump, so it drifted — by the 26.8.0 port it was four minors
+behind the server it shipped with, leaving the console out of sync with the admin
+REST API. Dropping it also restores Keycloak's own, version-matched `keycloak.v2`.
+
+**Migration:** realms whose admin theme is set to `phasetwo.v2` must be changed to
+`phasetwo-ui` (*Realm Settings* -> *Themes* -> *Admin theme*). A realm left on
+`phasetwo.v2` falls back to the server default.
 
 ## Internal extensions
 
