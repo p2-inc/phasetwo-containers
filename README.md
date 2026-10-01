@@ -45,6 +45,42 @@ There will also be major/minor/patch version tags released. E.g.
 - `26.0.2`
 - `26.0.2.1688664025`
 
+### Bumping Keycloak
+
+**`<keycloak.version>` in `libs/pom.xml` is the only place the Keycloak version is
+set.** Everything on the build and release path derives from it:
+
+| Consumer | What it takes from the pom |
+|---|---|
+| `scripts/build-keycloak.sh` | the version to build, and the `<version>_crdb` branch to check out |
+| `.github/actions/keycloak-artifacts` | the same, plus the branch head sha for the build cache key |
+| `libs/` | the `org.keycloak:*` artifacts to compile against |
+| `.github/workflows/release.yml` | the published image tags (`26`, `26.8`, `26.8.0`, `26.8.0.<ts>`) |
+
+So a Keycloak bump is one edit. If you are adding another consumer, read the
+version from the pom rather than hardcoding it.
+
+> This was not always true, and it caused a bad release. Until October 2026
+> `release.yml` carried its own copy:
+>
+> ```yaml
+> env:
+>   # Version 26.6.7
+>   VERSION_MAJOR: 26
+>   VERSION_SUBMAJOR: 6
+>   VERSION_MINOR: 7
+> ```
+>
+> The 26.8.0 bump updated `libs/pom.xml` but not that block, so a Keycloak 26.8.0
+> image was published as `26.6.7.1790853332` — and because the build-stamped tag
+> drives the whole tag set, it also overwrote `26.6.7`, `26.6`, `26` and `latest`.
+> Anyone pinned to `26.6.7` was silently moved onto a different Keycloak minor.
+> The image itself was correct throughout; only the label was wrong.
+>
+> `release.yml` now reads the pom and refuses to publish unless the value is a
+> plain `MAJOR.MINOR.PATCH`. Keep it that way: these tags are public and
+> effectively permanent, and a mislabelled one is expensive to unwind.
+
 ## Building
 
 ### Prerequisite: build Keycloak from source
