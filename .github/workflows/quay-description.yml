@@ -57,8 +57,11 @@ jobs:
           fi
 
           # Read it back rather than trusting the 200: confirm quay stored what we sent.
+          # -j, not -r: --raw-output appends a newline, which would make the file
+          # one byte longer than the stored description and fail the diff below on
+          # every run even when the publish was perfect.
           curl -sS "https://quay.io/api/v1/repository/${REPO}?includeTags=false" \
-            | jq -r '.description' > /tmp/live.md
+            | jq -j '.description' > /tmp/live.md
 
           if diff -q quay-description.md /tmp/live.md >/dev/null; then
             echo "Published and verified: $(wc -c < quay-description.md) bytes"

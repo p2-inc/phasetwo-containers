@@ -14,29 +14,25 @@ Format is `<keycloak-version>.<build-timestamp>`, e.g. `26.8.0.1790855979`.
 
 Rolling tags are also published, each pointing at the newest build on that line:
 
-| Tag | Resolves to |
-|---|---|
-| `latest` | newest build of any version |
-| `26` | newest `26.x.y` |
-| `26.8` | newest `26.8.y` |
-| `26.8.0` | newest build of Keycloak 26.8.0 |
+- `latest` — newest build of any version
+- `26` — newest `26.x.y`
+- `26.8` — newest `26.8.y`
+- `26.8.0` — newest build of Keycloak 26.8.0
 
 Pin `<keycloak-version>.<build-timestamp>` for reproducible deployments.
 
 ## Extensions
 
-| Extension | Purpose |
-|---|---|
-| [Organizations](https://github.com/p2-inc/keycloak-orgs) | Multi-tenant organization entities, resources and APIs |
-| [Themes](https://github.com/p2-inc/keycloak-themes) | Login, email and admin theme customization via realm attributes, with no extension deploy. Ships the `phasetwo-ui` theme |
-| [Events](https://github.com/p2-inc/keycloak-events) | Event listener implementations, including webhooks |
-| [Magic Link](https://github.com/p2-inc/keycloak-magic-link) | Magic-link authentication, as an authenticator or a REST resource |
-| [Atomic Auth Flows](https://github.com/p2-inc/keycloak-atomic-auth-flows) | Create and modify authentication flows in a single API call |
-| [SCIM Server](https://github.com/p2-inc/keycloak-scim-server) | SCIM 2.0 user and group provisioning |
-| [Admin Portal](https://github.com/p2-inc/phasetwo-admin-portal) | Self-management UI for users' accounts and organizations |
-| [IdP Wizards](https://github.com/p2-inc/idp-wizard) | Guided identity-provider setup for SSO admins and organization owners |
-| [User Migration](https://github.com/p2-inc/keycloak-user-migration) | User migration storage provider and API client |
-| [Apple Identity Provider](https://github.com/klausbetz/apple-identity-provider-keycloak) | Sign in with Apple |
+- **[Organizations](https://github.com/p2-inc/keycloak-orgs)** — multi-tenant organization entities, resources and APIs
+- **[Themes](https://github.com/p2-inc/keycloak-themes)** — login, email and admin theme customization via realm attributes, with no extension deploy. Ships the `phasetwo-ui` theme
+- **[Events](https://github.com/p2-inc/keycloak-events)** — event listener implementations, including webhooks
+- **[Magic Link](https://github.com/p2-inc/keycloak-magic-link)** — magic-link authentication, as an authenticator or a REST resource
+- **[Atomic Auth Flows](https://github.com/p2-inc/keycloak-atomic-auth-flows)** — create and modify authentication flows in a single API call
+- **[SCIM Server](https://github.com/p2-inc/keycloak-scim-server)** — SCIM 2.0 user and group provisioning
+- **[Admin Portal](https://github.com/p2-inc/phasetwo-admin-portal)** — self-management UI for users' accounts and organizations
+- **[IdP Wizards](https://github.com/p2-inc/idp-wizard)** — guided identity-provider setup for SSO admins and organization owners
+- **[User Migration](https://github.com/p2-inc/keycloak-user-migration)** — user migration storage provider and API client
+- **[Apple Identity Provider](https://github.com/klausbetz/apple-identity-provider-keycloak)** — Sign in with Apple
 
 ### Admin console theme
 
@@ -50,18 +46,19 @@ Admin console customizations ship as the **`phasetwo-ui`** theme in [keycloak-th
 - Runs as a non-root user (uid/gid `2000`)
 - OpenJDK 21
 - `linux/amd64` and `linux/arm64`
-- A CycloneDX SBOM and SLSA provenance are attached to every published image:
-  ```bash
-  docker buildx imagetools inspect --format '{{ json .SBOM }}' quay.io/phasetwo/phasetwo-keycloak:latest
-  ```
+- A CycloneDX SBOM and SLSA provenance are attached to every published image
+
+Retrieve the SBOM with:
+
+```bash
+docker buildx imagetools inspect --format '{{ json .SBOM }}' quay.io/phasetwo/phasetwo-keycloak:latest
+```
 
 ### Defaults that differ from upstream
 
-| Variable | Default | Why |
-|---|---|---|
-| `KC_HEALTH_ENABLED` | `true` | `/health/live` and `/health/ready` on port 9000 for Kubernetes probes |
-| `KC_METRICS_ENABLED` | `true` | Prometheus metrics on port 9000 |
-| `KC_HTTP_ENABLED` | `false` | Plaintext HTTP is off. Set it to `true` for local testing, or where TLS terminates in a sidecar |
+- **`KC_HEALTH_ENABLED=true`** — `/health/live` and `/health/ready` on port 9000, for Kubernetes probes
+- **`KC_METRICS_ENABLED=true`** — Prometheus metrics on port 9000
+- **`KC_HTTP_ENABLED=false`** — plaintext HTTP is off. Set it to `true` for local testing, or where TLS terminates in a sidecar
 
 Ports exposed: `8080` (HTTP), `8443` (HTTPS), `9000` (health and metrics).
 
