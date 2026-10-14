@@ -31,7 +31,7 @@ Pin `<keycloak-version>.<build-timestamp>` for reproducible deployments.
 - **[SCIM Server](https://github.com/p2-inc/keycloak-scim-server)** — SCIM 2.0 user and group provisioning
 - **[Admin Portal](https://github.com/p2-inc/phasetwo-admin-portal)** — self-management UI for users' accounts and organizations
 - **[IdP Wizards](https://github.com/p2-inc/idp-wizard)** — guided identity-provider setup for SSO admins and organization owners
-- **[User Migration](https://github.com/p2-inc/keycloak-user-migration)** — user migration storage provider and API client
+- **[User Migration](https://github.com/daniel-frak/keycloak-user-migration)** — user migration storage provider and API client
 - **[Apple Identity Provider](https://github.com/klausbetz/apple-identity-provider-keycloak)** — Sign in with Apple
 
 ### Admin console theme
