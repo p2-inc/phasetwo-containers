@@ -17,7 +17,7 @@ This distribution contains the following extensions:
 | Magic Link              | :white_check_mark: | https://github.com/p2-inc/keycloak-magic-link                 | Magic Link Authentication. Created with an Authenticator or Resource.                     |
 | Organizations           | :white_check_mark: | https://github.com/p2-inc/keycloak-orgs                       | Organizations multi-tenant entities, resources and APIs.                                  |
 | Themes                  | :white_check_mark: | https://github.com/p2-inc/keycloak-themes                     | Login and email theme customizations via Realm attributes without deploying an extension. |
-| User Migration          | :white_check_mark: | https://github.com/p2-inc/keycloak-user-migration             | User migration storage provider and API client.                                           |
+| User Migration          | :white_check_mark: | https://github.com/daniel-frak/keycloak-user-migration             | User migration storage provider and API client.                                           |
 | Apple Identity Provider | :white_check_mark: | https://github.com/klausbetz/apple-identity-provider-keycloak | Enables Sign in with Apple for web-based and native applications (via token-exchange)     |
 
 ## Differences
