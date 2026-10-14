@@ -110,6 +110,36 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # Ask the server it just built which Keycloak it is, and hold that against
+      # libs/pom.xml. Everything upstream of here derives from the pom — the fork
+      # branch to build, the artifacts libs/ compiles against, the published tags —
+      # so a build that succeeds is not evidence that the version actually moved.
+      # README.md records what that costs: a 26.8.0 image published as 26.6.7,
+      # overwriting the rolling tags for a minor it was not.
+      - name: Verify the image reports the Keycloak version libs/pom.xml pins
+        run: |
+          expected=$(sed -n 's|.*<keycloak\.version>\(.*\)</keycloak\.version>.*|\1|p' libs/pom.xml | head -1)
+          if [ -z "$expected" ]; then
+            echo "::error file=libs/pom.xml::could not read <keycloak.version>"
+            exit 1
+          fi
+          output=$(docker run --rm phasetwo-keycloak:pr --version 2>&1) || {
+            echo "::error::'kc.sh --version' failed in the built image"
+            printf '%s\n' "$output"
+            exit 1
+          }
+          printf '%s\n' "$output"
+          reported=$(printf '%s\n' "$output" | sed -n 's/^Keycloak \([0-9][^[:space:]]*\).*/\1/p' | head -1)
+          if [ -z "$reported" ]; then
+            echo "::error::could not parse a Keycloak version out of 'kc.sh --version'"
+            exit 1
+          fi
+          if [ "$reported" != "$expected" ]; then
+            echo "::error file=libs/pom.xml::image reports Keycloak $reported but libs/pom.xml pins $expected"
+            exit 1
+          fi
+          echo "image reports Keycloak $reported, matching libs/pom.xml"
+
       # Non-gating Trivy scan — surfaces HIGH/CRITICAL regressions in the PR
       # checks tab without blocking the merge. Branch protection can flip
       # exit-code to '1' to make this a hard gate.
