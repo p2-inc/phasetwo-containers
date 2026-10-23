@@ -200,6 +200,27 @@ ENV JAVA_HOME=/usr/lib/jvm/default-jvm \
     LANG=C.UTF-8 \
     KC_RUN_IN_CONTAINER=true
 
+# Fail the build if the JVM truststore trusts a root that has been distrusted
+# for cause. Trivy cannot see this (a trusted root is not a CVE), so the daily
+# scan would never flag it. Wolfi's java-cacerts is generated from the
+# Mozilla-derived OS bundle and does not carry these, but the JDK's own bundled
+# cacerts does (quay.io/keycloak/keycloak:26.8.1 trusts emSign ECC Root CA - G3),
+# so this guards against the truststore source ever changing underneath us.
+#   - emSign ECC Root CA - G3, AAA Certificate Services: roots of the eMudhra
+#     intermediates whose keys were compromised in October 2026
+#     (https://github.com/keycloak/keycloak/issues/54197)
+RUN set -eu; \
+    store=$(keytool -list -cacerts -storepass changeit); \
+    for fp in \
+        86:A1:EC:BA:08:9C:4A:8D:3B:BE:27:34:C6:12:BA:34:1D:81:3E:04:3C:F9:E8:A8:62:CD:5C:57:A3:6B:BE:6B \
+        D7:A7:A0:FB:5D:7E:27:31:D7:71:E9:48:4E:BC:DE:F7:1D:5F:0C:3E:0A:29:48:78:2B:C8:3E:E0:EA:69:9E:F4 \
+    ; do \
+        if printf '%s\n' "$store" | grep -q "$fp"; then \
+            echo "ERROR: JVM truststore trusts distrusted root $fp" >&2; \
+            exit 1; \
+        fi; \
+    done
+
 # JVM hardening — only the bits upstream kc.sh doesn't already set. The
 # upstream default JAVA_OPTS (see /opt/keycloak/bin/kc.sh in the base
 # image) already covers `-XX:+ExitOnOutOfMemoryError`, the
