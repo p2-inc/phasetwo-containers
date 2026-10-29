@@ -18,6 +18,10 @@ FROM quay.io/phasetwo/phasetwo-keycloak:latest
 ENV KC_SPI_EVENTS_STORE_PROVIDER=ext-event-mdc-logger-store
 ENV KC_SPI_EVENTS_STORE_EXT_EVENT_MDC_LOGGER_STORE_USE_JPA=true
 ENV EXT_EVENT_MDC_LOGGER_ENABLED=true
+# Hosted clusters never expose the master realm, so the bare hostname shows a neutral page
+# (keycloak-themes phasetwo-ui) instead of forwarding to the admin console. Set here, not in
+# the helm chart, so it only reaches clusters whose image ships the theme.
+ENV KC_SPI_THEME__WELCOME_THEME=phasetwo-ui
 
 COPY --from=builder /opt/keycloak/lib/quarkus/ /opt/keycloak/lib/quarkus/
 COPY --from=builder /opt/keycloak/providers/ /opt/keycloak/providers/
