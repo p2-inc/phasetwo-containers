@@ -190,10 +190,13 @@ ENV KEYCLOAK_HOME=/opt/keycloak
 # The JDK floor is 21.0.13.1, the first Wolfi build after the
 # CVE-2026-114938 ("Java4Shell") fix in the x86-64 AVX-512 Base64 intrinsic;
 # it keeps a stale mirror or cache from silently installing a vulnerable JDK.
+# The floor goes on openjdk-21-jre (the actual runtime): default-jvm is only
+# the symlink package and does not pin the JRE version it pulls in.
 RUN apk add --no-cache \
         bash \
         ca-certificates-bundle \
         'openjdk-21-default-jvm>=21.0.13.1' \
+        'openjdk-21-jre>=21.0.13.1' \
     && addgroup -g ${GID} ${USER} \
     && adduser -u ${UID} -G ${USER} -s /bin/bash -D -h ${KEYCLOAK_HOME} ${USER} \
     && rm -rf /var/cache/apk/*
