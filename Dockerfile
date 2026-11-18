@@ -187,10 +187,13 @@ ENV KEYCLOAK_HOME=/opt/keycloak
 # Three runtime packages only: a JRE for the JVM, bash for kc.sh, and the CA
 # bundle for outbound TLS (SMTP, OIDC IdPs, webhooks, etc.). Then create the
 # unprivileged account that the runtime will run as.
+# The JDK floor is 21.0.13.1, the first Wolfi build after the
+# CVE-2026-114938 ("Java4Shell") fix in the x86-64 AVX-512 Base64 intrinsic;
+# it keeps a stale mirror or cache from silently installing a vulnerable JDK.
 RUN apk add --no-cache \
         bash \
         ca-certificates-bundle \
-        openjdk-21-default-jvm \
+        'openjdk-21-default-jvm>=21.0.13.1' \
     && addgroup -g ${GID} ${USER} \
     && adduser -u ${UID} -G ${USER} -s /bin/bash -D -h ${KEYCLOAK_HOME} ${USER} \
     && rm -rf /var/cache/apk/*
@@ -230,10 +233,15 @@ RUN set -eu; \
 # append:
 #   - HeapDumpOnOutOfMemoryError + HeapDumpPath: capture diagnostics on OOM
 #   - java.awt.headless: avoid AWT init for headless container workloads
+#   - -UseBASE64Intrinsics: run java.util.Base64 as plain Java instead of the
+#     JIT's hand-written assembly. Defense in depth for CVE-2026-114938, whose
+#     bug lives in the x86-64 AVX-512 intrinsic (ARM64 never uses it); the
+#     cost is a little CPU on Base64-heavy paths (JWT/SAML parsing).
 ENV JAVA_OPTS_APPEND="\
 -XX:+HeapDumpOnOutOfMemoryError \
 -XX:HeapDumpPath=/tmp/heap.hprof \
--Djava.awt.headless=true"
+-Djava.awt.headless=true \
+-XX:-UseBASE64Intrinsics"
 
 # Secure defaults: keep management/health on, but disable plaintext HTTP. Any
 # deployment that needs cleartext on the pod (e.g. local docker-compose or a
